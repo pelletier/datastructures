@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+    <head>
+        <title>test</title>
+        <style type="text/css" media="screen">
+            #code { 
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                width: 50%;
+            }
+            #sidebar {
+                width: 50%;
+                float: right;
+            }
+            #output {
+                width: 100%;
+                height: 400px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="sidebar">
+            <button id="start">Run</button>
+            <div>
+                <textarea id="output"></textarea>
+            </div>
+        </div>
+        <div id="code">console.log('this is my algorithm');
+var a = 2 +2;
+console.log(a);
+for (var i = 0; i < 3; ++i) {
+    console.log(i);
+}</div>
+
+        <script src="http://code.jquery.com/jquery-2.0.0.min.js"></script>
+        <script src="http://rawgithub.com/ajaxorg/ace-builds/master/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+        <script>
+            if (typeof(Worker) === undefined) {
+                alert("Your browser does not support web workers.\nGo home, dinausor!");
+                return;
+            }
+            var editor = null;
+            var worker = null;
+
+            $(document).ready(function(){
+                editor = ace.edit('code');
+                editor.getSession().setUseWorker(false);
+                editor.setTheme('ace/theme/monokai');
+                editor.getSession().setMode('ace/mode/javascript');
+
+                $("button#start").click(function(){
+                    var lines = editor.getSession().getDocument().getAllLines().slice(0);
+                    console.log(lines);
+
+                    var running_lines = [];
+                    for (var i in lines) {
+                        running_lines.push(lines[i]);
+                        running_lines.push("update("+i+");");
+                    }
+
+                    console.log(running_lines);
+
+                    worker = new Worker('worker.js');
+                    worker.onmessage = function(event) {
+                        var data = JSON.parse(event.data);
+                        console.log(data);
+
+                        if (data.action === "ready") {
+                            worker.postMessage(running_lines.join('\n'));
+                            $("button#start").attr('disabled', true);
+                        }
+                        else if (data.action === "done") {
+                            console.log("computation completed");
+                            $("button#start").removeAttr('disabled');
+                        }
+                        else if (data.action === "console") {
+                            console.log("console: " + data.data);
+                            var box = $("textarea#output");
+                            box.val(box.val() + data.data + '\n');
+                        }
+                        else if (data.action === "line") {
+                            console.log("move to line: " + data.data);
+                            editor.setHighlightActiveLine(true);
+                            editor.gotoLine(data.data + 1, 0, false);
+                        }
+                        else {
+                            console.log("unhandled message");
+                        }
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>
