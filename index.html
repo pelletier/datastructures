@@ -3,6 +3,7 @@
     <head>
         <title>test</title>
         <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.min.css" rel="stylesheet">
         <style type="text/css" media="screen">
             #code { 
                 width: 50%;
@@ -75,6 +76,7 @@ for (var i = 0; i < 3; ++i) {
             }
             var editor = null;
             var worker = null;
+            var running = false;
 
             $(document).ready(function(){
                 editor = ace.edit('code');
@@ -82,7 +84,11 @@ for (var i = 0; i < 3; ++i) {
                 editor.setTheme('ace/theme/xcode');
                 editor.getSession().setMode('ace/mode/javascript');
 
-                $("button#start").click(function(){
+                $("#start").click(function(){
+                    if (running) {
+                        return false;
+                    }
+
                     var lines = editor.getSession().getDocument().getAllLines().slice(0);
                     console.log(lines);
 
@@ -101,11 +107,12 @@ for (var i = 0; i < 3; ++i) {
 
                         if (data.action === "ready") {
                             worker.postMessage(running_lines.join('\n'));
-                            $("button#start").attr('disabled', true);
+                            $("#start").html('<i class="icon-spinner icon-spin icon-large"></i> Running...');
+                            running = true;
                         }
                         else if (data.action === "done") {
                             console.log("computation completed");
-                            $("button#start").removeAttr('disabled');
+                            $("#start").html('<i class="icon-play"></i> Run</a>');
                         }
                         else if (data.action === "console") {
                             console.log("console: " + data.data);
