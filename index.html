@@ -52,6 +52,17 @@ for (var i = 0; i < 3; ++i) {
                                 <ul class="nav">
                                     <li><a id="start" href="#"><i class="icon-play"></i> Run</a></li>
                                 </ul>
+                                <form class="navbar-form pull-left">
+                                    <select id="speed">
+                                        <option value="0">~0 s/op</option>
+                                        <option value="0.2">0.2 s/op</option>
+                                        <option value="0.5">0.5 s/op</option>
+                                        <option value="1" selected>1 s/op</option>
+                                        <option value="2">2 s/op</option>
+                                        <option value="5">5 s/op</option>
+                                        <option value="10">10 s/op</option>
+                                    <select>
+                                </form>
                             </div>
                         </div>
                         <div class="row-fluid">
@@ -100,19 +111,27 @@ for (var i = 0; i < 3; ++i) {
 
                     console.log(running_lines);
 
+                    var speed = parseFloat($("#speed option:selected").val());
+
                     worker = new Worker('worker.js');
                     worker.onmessage = function(event) {
                         var data = JSON.parse(event.data);
                         console.log(data);
 
                         if (data.action === "ready") {
-                            worker.postMessage(running_lines.join('\n'));
+                            var payload = {
+                                'action': 'perform',
+                                'lines': running_lines,
+                                'speed': speed
+                            }
+                            worker.postMessage(JSON.stringify(payload));
                             $("#start").html('<i class="icon-spinner icon-spin icon-large"></i> Running...');
                             running = true;
                         }
                         else if (data.action === "done") {
                             console.log("computation completed");
                             $("#start").html('<i class="icon-play"></i> Run</a>');
+                            running = false;
                         }
                         else if (data.action === "console") {
                             console.log("console: " + data.data);

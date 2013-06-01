@@ -1,3 +1,5 @@
+var speed = 0;
+
 function postData(data) {
     self.postMessage(JSON.stringify(data));
 }
@@ -9,7 +11,7 @@ function line_msg(i)      { return { 'action': 'line',    'data': i   }; }
 
 function sleep(amount) {
     var start = new Date().getTime();
-    for (var i = 0; i < 1e7; ++i) {
+    while (true) {
         if ((new Date().getTime() - start) > amount) {
             break;
         }
@@ -24,7 +26,7 @@ var console = {
 
 function update(i) {
     postData(line_msg(i));
-    sleep(1000);
+    sleep(speed);
 }
 
 
@@ -41,7 +43,15 @@ function run(rlines) {
 // wait for input
 
 self.addEventListener('message', function(event) {
-    run(event.data.split('\n'));
+    var data = JSON.parse(event.data);
+    if (data.action === 'perform') {
+        speed = data.speed * 1000;
+        console.log("SPEED: " + speed);
+        run(data.lines);
+    }
+    else {
+        console.log("unknown message: " + data);
+    }
 }, false);
 
 
