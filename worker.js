@@ -46,7 +46,6 @@ self.addEventListener('message', function(event) {
     var data = JSON.parse(event.data);
     if (data.action === 'perform') {
         speed = data.speed * 1000;
-        console.log("SPEED: " + speed);
         run(data.lines);
     }
     else {
