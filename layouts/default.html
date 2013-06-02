@@ -1,29 +1,23 @@
-<!DOCTYPE HTML>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>A Brand New nanoc Site - <%= @item[:title] %></title>
-    <link rel="stylesheet" href="/style.css">
+<!doctype html>
+<html>
+    <head>
+        <title>Datastructures</title>
+        <link href="/static/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="/static/css/font-awesome.min.css" rel="stylesheet">
+        <link href="/static/css/site.css" rel="stylesheet">
+    </head>
+    <body>
+        <script src="/static/js/jquery-2.0.0.min.js"></script>
+        <script src="/static/js/bootstrap.min.js"></script>
+        <div class="container-fixed">
+            <div class="navbar">
+                <div class="navbar-inner">
+                    <a class="brand" href="#">Datastructures</a>
+                </div>
+            </div>
 
-    <!-- you don't need to keep this, but it's cool for stats! -->
-    <meta name="generator" content="nanoc <%= Nanoc::VERSION %>"> 
-  </head>
-  <body>
-    <div id="main">
-      <%= yield %>
-    </div>
-    <div id="sidebar">
-      <h2>Documentation</h2>
-      <ul>
-        <li><a href="http://nanoc.ws/docs/">Documentation</a></li>
-        <li><a href="http://nanoc.ws/docs/tutorial/">Getting Started</a></li>
-      </ul>
-      <h2>Community</h2>
-      <ul>
-        <li><a href="http://groups.google.com/group/nanoc/">Discussion Group</a></li>
-        <li><a href="irc://chat.freenode.net/#nanoc">IRC Channel</a></li>
-        <li><a href="http://github.com/nanoc/nanoc/wiki/">Wiki</a></li>
-      </ul>
-    </div>
-  </body>
+            <%= yield %>
+
+        </div>
+    </body>
 </html>
