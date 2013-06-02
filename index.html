@@ -151,14 +151,9 @@
                         running_lines.push(lines[i]);
                         var tline = $.trim(lines[i]);
                         console.log('trimmed: ' + tline);
-                        if (tline === '}') {
-                            console.log('closed bracket!');
-                        }
-                        if (tline.match(/^\/\/.*$/)) {
-
-                        }
-                        else if (tline === '}' && lines[parseInt(i)+1].match(/^\s*else\s+{\s*$/)) {
-                        }
+                        // } else {
+                        if (tline.match(/^}|$/)) {} // don't output after blank and } lines
+                        else if (tline.match(/^\/\/.*$/)) {} // don't output after comment
                         else {
                             running_lines.push("update("+i+");");
                         }

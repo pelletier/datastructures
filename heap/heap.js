@@ -33,8 +33,7 @@ Heap.prototype.insert = function(key) {
             var tmp = this.data[parent];
             this.data[parent] = this.data[index];
             this.data[index] = tmp;
-        }
-        else {
+        } else {
             break;
         }
     }
@@ -57,8 +56,7 @@ Heap.prototype._heapify = function(i) {
             this.data[largest] = this.data[i];
             this.data[i] = tmp;
             i = largest;
-        }
-        else {
+        } else {
             break;
         }
     }
