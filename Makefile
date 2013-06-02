@@ -13,6 +13,8 @@ watch:
 deploy: compile
 	mkdir -p /tmp/exec_js
 	cp -R output/* /tmp/exec_js
+	rm -Rf /tmp/exec_js/output
+	rm -Rf /tmp/exec_js/tmp
 	git checkout gh-pages
 	rm -Rf *
 	mv /tmp/exec_js/* .
