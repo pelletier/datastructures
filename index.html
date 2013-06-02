@@ -2,8 +2,8 @@
 <html>
     <head>
         <title>Datastructures</title>
-        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
-        <link href="//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.min.css" rel="stylesheet">
+        <link href="css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="css/font-awesome.min.css" rel="stylesheet">
         <style type="text/css" media="screen">
             #code { 
                 width: 50%;
@@ -47,12 +47,7 @@
 
             <div class="row-fluid">
                 <div class="span6">
-                    <div id="code">console.log('this is my algorithm');
-var a = 2 +2;
-console.log(a);
-for (var i = 0; i < 3; ++i) {
-    console.log(i);
-}</div>
+                    <div id="code"></div>
                 </div>
                 <div class="span6" id="sidebar">
                     <div class="container-fluid">
@@ -87,9 +82,9 @@ for (var i = 0; i < 3; ++i) {
             </div>
         </div>
 
-        <script src="http://code.jquery.com/jquery-2.0.0.min.js"></script>
-        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
-        <script src="http://rawgithub.com/ajaxorg/ace-builds/master/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+        <script src="lib/jquery-2.0.0.min.js"></script>
+        <script src="lib/bootstrap.min.js"></script>
+        <script src="lib/ace.js"></script>
         <script>
             var editor = null;
             var worker = null;
@@ -100,16 +95,27 @@ for (var i = 0; i < 3; ++i) {
                 output.val(output.val() + msg + '\n');
             }
 
+            function load_code(name) {
+                $.ajax(name, {
+                    dataType: "text"
+                }).done(function(msg) {
+                    editor.setValue(msg);
+                    editor.gotoLine(1);
+                });
+            }
+
             $(document).ready(function(){
                 if (typeof(Worker) === undefined) {
                     alert("Your browser does not support web workers.\nGo home, dinausaur!");
                     return;
                 }
-
                 editor = ace.edit('code');
                 editor.getSession().setUseWorker(false);
                 editor.setTheme('ace/theme/xcode');
                 editor.getSession().setMode('ace/mode/javascript');
+
+                load_code('heap/heap.js');
+
 
                 $("#start").click(function(){
                     if (running) {
@@ -126,11 +132,12 @@ for (var i = 0; i < 3; ++i) {
                     for (var i in lines) {
                         var line = lines[i];
                         line = $.trim(line);
-                        if (!line.match(/(;|{|})$/)) {
+                        if (!line.match(/^((.*(;|{|}))||\/\/.*)$/)) {
                             var ln = parseInt(i) + 1;
                             log("Line " + ln + " does not ends with any of [';', '{', '}']. Abort.");
+                            log("-> " + line);
                             editor.getSession().setAnnotations([{
-                              row: ln,
+                              row: ln - 1,
                               column: line.length,
                               text: "Bad line",
                               type: "error" // also warning and information
@@ -142,10 +149,22 @@ for (var i = 0; i < 3; ++i) {
                     var running_lines = [];
                     for (var i in lines) {
                         running_lines.push(lines[i]);
-                        running_lines.push("update("+i+");");
+                        var tline = $.trim(lines[i]);
+                        console.log('trimmed: ' + tline);
+                        if (tline === '}') {
+                            console.log('closed bracket!');
+                        }
+                        if (tline.match(/^\/\/.*$/)) {
+
+                        }
+                        else if (tline === '}' && lines[parseInt(i)+1].match(/^\s*else\s+{\s*$/)) {
+                        }
+                        else {
+                            running_lines.push("update("+i+");");
+                        }
                     }
 
-                    console.log(running_lines);
+                    console.log(running_lines.join('\n'));
 
                     var speed = parseFloat($("#speed option:selected").val());
 
