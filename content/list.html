@@ -1,0 +1,30 @@
+---
+title: List
+---
+
+</div>
+<div class="container">
+    <div class="row">
+        <div class="span12">
+            <h1>Algorithms and data structures</h1>
+
+        </div>
+    </div>
+        <% @site.algorithms.each_with_index do |algo, index| %>
+            <% if index % 4 == 0 %>
+                <div class="row">
+            <% end %>
+            <div class="span3">
+                <h3><a href="<%= algo.path %>"><%= algo[:title] %></a></h3>
+            </div>
+            <% if index % 4 == 3 %>
+                </div>
+            <% end %>
+        <% end %>
+        <% if @site.algorithms_count % 4 != 0 %>
+                </div>
+        <% end %>
+    </div>
+</div>
+
+<div>

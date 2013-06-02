@@ -11,7 +11,15 @@ load_code = (name) ->
         editor.setValue(msg)
         editor.gotoLine(1)
 
+# http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values
+get_parameter = (name) ->
+    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]")
+    regex = new RegExp("[\\?&]" + name + "=([^&#]*)")
+    results = regex.exec(location.search)
+    return decodeURIComponent(results[1].replace(/\+/g, " "))
+
 $(document).ready () =>
+    console.log('ready');
     if typeof(Worker) is undefined
         alert("Your browser does not support web workers.\nGo home, dinausaur!")
         return
@@ -21,7 +29,7 @@ $(document).ready () =>
     editor.setTheme('ace/theme/xcode')
     editor.getSession().setMode('ace/mode/javascript')
 
-    load_code('heap/heap.js')
+    load_code("/algorithms/#{get_parameter('file')}")
 
     $("#start").click () =>
         return false if running
@@ -60,7 +68,7 @@ $(document).ready () =>
 
         speed = parseFloat($("#speed option:selected").val())
 
-        worker = new Worker('worker.js')
+        worker = new Worker('/static/js/worker.js')
         worker.onmessage = (event) =>
             data = JSON.parse(event.data)
             console.log(data)

@@ -1,0 +1,28 @@
+</div>
+
+<div class="container">
+
+    <div class="row">
+        <div class="span12">
+            <h1><%= item[:title] %></h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span9">
+            <%= yield %>
+        </div>
+        <div class="span3">
+            <div class="well">
+                <p>
+                    <img src="<%= item[:picture] %>">
+                </p>
+
+                <div>
+                    <a href="/exec/?file=<%= item[:js_name] %>" class="btn btn-primary btn-block">See the code</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
