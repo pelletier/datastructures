@@ -15,7 +15,7 @@ title: List
                 <div class="row">
             <% end %>
             <div class="span3">
-                <h3><a href="<%= algo.path %>"><%= algo[:title] %></a></h3>
+                <h3><a href="<%= relative_path_to(algo.path) %>"><%= algo[:title] %></a></h3>
             </div>
             <% if index % 4 == 3 %>
                 </div>
