@@ -13,18 +13,27 @@
                 bottom: 0;
                 left: 0;
             }
+
             #sidebar {
                 width: 50%;
                 float: right;
                 position: relative;
                 top: -30px;
             }
+
             #output {
                 width: 100%;
                 height: 400px;
                 -webkit-box-sizing: border-box;
                 -moz-box-sizing: border-box;
                 box-sizing: border-box;
+            }
+
+            #label_output {
+                float: right;
+                position:relative;
+                top: 30px;
+                left: -10px;
             }
         </style>
     </head>
@@ -68,7 +77,8 @@ for (var i = 0; i < 3; ++i) {
                         <div class="row-fluid">
                             <div class="span12">
                                 <div>
-                                    <textarea id="output"></textarea>
+                                    <div class="label" id="label_output">Output</div>
+                                    <textarea id="output" readonly></textarea>
                                 </div>
                             </div>
                         </div>
@@ -128,11 +138,15 @@ for (var i = 0; i < 3; ++i) {
                             worker.postMessage(JSON.stringify(payload));
                             $("#start").html('<i class="icon-spinner icon-spin icon-large"></i> Running...');
                             running = true;
+                            editor.setReadOnly(true);
+                            $("#speed").attr('disabled', true);
                         }
                         else if (data.action === "done") {
                             console.log("computation completed");
                             $("#start").html('<i class="icon-play"></i> Run</a>');
                             running = false;
+                            editor.setReadOnly(false);
+                            $("#speed").removeAttr('disabled');
                         }
                         else if (data.action === "console") {
                             console.log("console: " + data.data);
