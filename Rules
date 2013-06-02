@@ -29,10 +29,6 @@ compile '/assets/*/*' do
   # don’t filter or layout
 end
 
-compile '/algorithms/*/*.js' do
-  # don’t filter or layout
-end
-
 compile '/algorithms/*/description/' do
   filter :erb
   filter :redcarpet
@@ -40,8 +36,11 @@ compile '/algorithms/*/description/' do
   layout 'default'
 end
 
+compile '/algorithms/*/*/' do
+  # don’t filter or layout
+end
+
 compile '*' do
-  puts item.path
   if item.binary?
     # don’t filter binary items
   else
@@ -67,7 +66,12 @@ route '/assets/js/*/' do
   item.identifier.sub(%r{^/assets/js}, '/static/js').chop + '.js'
 end
 
-route '/algorithms/*/*.js' do
+route '/algorithms/*/description/' do
+  item.identifier + 'index.html'
+  #item.identifier.sub(%r{^/algorithms}, '/static/js/algorithms').chop + '.js'
+end
+
+route '/algorithms/*/*/' do
   item.identifier.sub(%r{^/algorithms}, '/static/js/algorithms').chop + '.js'
 end
 
