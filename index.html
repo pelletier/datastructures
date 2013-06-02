@@ -81,15 +81,16 @@ for (var i = 0; i < 3; ++i) {
         <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
         <script src="http://rawgithub.com/ajaxorg/ace-builds/master/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
         <script>
-            if (typeof(Worker) === undefined) {
-                alert("Your browser does not support web workers.\nGo home, dinausaur!");
-                return;
-            }
             var editor = null;
             var worker = null;
             var running = false;
 
             $(document).ready(function(){
+                if (typeof(Worker) === undefined) {
+                    alert("Your browser does not support web workers.\nGo home, dinausaur!");
+                    return;
+                }
+
                 editor = ace.edit('code');
                 editor.getSession().setUseWorker(false);
                 editor.setTheme('ace/theme/xcode');
