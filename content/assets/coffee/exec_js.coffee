@@ -29,7 +29,7 @@ $(document).ready () =>
     editor.setTheme('ace/theme/xcode')
     editor.getSession().setMode('ace/mode/javascript')
 
-    load_code("/algorithms/#{get_parameter('file')}")
+    load_code("../algorithms/#{get_parameter('file')}")
 
     $("#start").click () =>
         return false if running
