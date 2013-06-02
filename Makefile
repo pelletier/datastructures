@@ -3,6 +3,7 @@ deploy:
 	cp -R * /tmp/exec_js
 	rm /tmp/exec_js/Makefile
 	git checkout gh-pages
+	rm -Rf *
 	mv /tmp/exec_js/* .
 	git add .
 	git commit -a -m "deploy `date`"
