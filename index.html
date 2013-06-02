@@ -151,7 +151,7 @@
                         running_lines.push(lines[i]);
                         var tline = $.trim(lines[i]);
                         // } else {
-                        if (tline.match(/^}|$/)) {} // don't output after blank and } lines
+                        if (tline.match(/^}?$/)) {} // don't output after blank and } lines
                         else if (tline.match(/^\/\/.*$/)) {} // don't output after comment
                         else {
                             running_lines.push("update("+i+");");
