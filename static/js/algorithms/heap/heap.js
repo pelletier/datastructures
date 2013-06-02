@@ -1,23 +1,4 @@
-<!doctype html>
-<html>
-    <head>
-        <title>Datastructures</title>
-        <meta charset="utf-8">
-        <link href="../../../static/css/bootstrap-combined.css" rel="stylesheet">
-        <link href="../../../static/css/font-awesome.css" rel="stylesheet">
-        <link href="../../../static/css/site.css" rel="stylesheet">
-    </head>
-    <body>
-        <script src="../../../static/js/jquery.js"></script>
-        <script src="../../../static/js/bootstrap.js"></script>
-        <div class="container-fixed">
-            <div class="navbar">
-                <div class="navbar-inner">
-                    <a class="brand" href="../../../">Datastructures</a>
-                </div>
-            </div>
-
-            var Heap = function (array) {
+var Heap = function (array) {
     this.data = (array != undefined) ? array : [];
     this.length = this.data.length;
 
@@ -83,8 +64,3 @@ Heap.prototype._heapify = function(i) {
 
 var heap = new Heap([4,5,1,9]);
 console.log("max=" + heap.find_max());
-
-
-        </div>
-    </body>
-</html>

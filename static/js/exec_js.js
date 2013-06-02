@@ -45,7 +45,7 @@
     editor.getSession().setUseWorker(false);
     editor.setTheme('ace/theme/xcode');
     editor.getSession().setMode('ace/mode/javascript');
-    load_code("../algorithms/" + (get_parameter('file')));
+    load_code("../static/js/algorithms/" + (get_parameter('file')));
     return $("#start").click(function() {
       var index, line, lines, ln, running_lines, speed, tline, _i, _j, _len, _len1;
 
