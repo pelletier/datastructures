@@ -95,6 +95,11 @@ for (var i = 0; i < 3; ++i) {
             var worker = null;
             var running = false;
 
+            function log(msg) {
+                var output = $("#output");
+                output.val(output.val() + msg + '\n');
+            }
+
             $(document).ready(function(){
                 if (typeof(Worker) === undefined) {
                     alert("Your browser does not support web workers.\nGo home, dinausaur!");
@@ -111,8 +116,28 @@ for (var i = 0; i < 3; ++i) {
                         return false;
                     }
 
+                    editor.getSession().clearAnnotations();
+                    $('#output').val('');
+
                     var lines = editor.getSession().getDocument().getAllLines().slice(0);
                     console.log(lines);
+
+                    // check if there is just one instruction per line
+                    for (var i in lines) {
+                        var line = lines[i];
+                        line = $.trim(line);
+                        if (!line.match(/(;|{|})$/)) {
+                            var ln = parseInt(i) + 1;
+                            log("Line " + ln + " does not ends with any of [';', '{', '}']. Abort.");
+                            editor.getSession().setAnnotations([{
+                              row: ln,
+                              column: line.length,
+                              text: "Bad line",
+                              type: "error" // also warning and information
+                            }]);
+                            return;
+                        }
+                    }
 
                     var running_lines = [];
                     for (var i in lines) {
@@ -150,8 +175,7 @@ for (var i = 0; i < 3; ++i) {
                         }
                         else if (data.action === "console") {
                             console.log("console: " + data.data);
-                            var box = $("textarea#output");
-                            box.val(box.val() + data.data + '\n');
+                            log(data.data);
                         }
                         else if (data.action === "line") {
                             console.log("move to line: " + data.data);
