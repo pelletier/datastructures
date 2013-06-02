@@ -85,7 +85,7 @@
       }
       console.log(running_lines.join('\n'));
       speed = parseFloat($("#speed option:selected").val());
-      worker = new Worker('/static/js/worker.js');
+      worker = new Worker('../static/js/worker.js');
       return worker.onmessage = function(event) {
         var data, payload;
 
