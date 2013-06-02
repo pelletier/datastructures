@@ -3,7 +3,7 @@ deploy:
 	cp -R * /tmp/exec_js
 	rm /tmp/exec_js/Makefile
 	git checkout gh-pages
-	mv /tmp/exec-js/* .
+	mv /tmp/exec_js/* .
 	git push origin gh-pages
 	git checkout master
 
