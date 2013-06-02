@@ -150,7 +150,6 @@
                     for (var i in lines) {
                         running_lines.push(lines[i]);
                         var tline = $.trim(lines[i]);
-                        console.log('trimmed: ' + tline);
                         // } else {
                         if (tline.match(/^}|$/)) {} // don't output after blank and } lines
                         else if (tline.match(/^\/\/.*$/)) {} // don't output after comment
