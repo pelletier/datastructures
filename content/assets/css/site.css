@@ -28,3 +28,12 @@
     top: 30px;
     left: -10px;
 }
+
+.welcome_well h3 {
+    text-align: center;
+}
+
+.welcome_well h3 i {
+    font-size: 4em;
+    display: block;
+}
