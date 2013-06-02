@@ -4,6 +4,8 @@ deploy:
 	rm /tmp/exec_js/Makefile
 	git checkout gh-pages
 	mv /tmp/exec_js/* .
+	git add .
+	git commit -a -m "deploy `date`"
 	git push origin gh-pages
 	git checkout master
 
