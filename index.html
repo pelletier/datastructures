@@ -2,42 +2,14 @@
 <html>
     <head>
         <title>Datastructures</title>
-        <link href="css/bootstrap-combined.min.css" rel="stylesheet">
-        <link href="css/font-awesome.min.css" rel="stylesheet">
-        <style type="text/css" media="screen">
-            #code { 
-                width: 50%;
-                position: absolute;
-                top: 62px;
-                right: 0;
-                bottom: 0;
-                left: 0;
-            }
-
-            #sidebar {
-                width: 50%;
-                float: right;
-                position: relative;
-                top: -30px;
-            }
-
-            #output {
-                width: 100%;
-                height: 400px;
-                -webkit-box-sizing: border-box;
-                -moz-box-sizing: border-box;
-                box-sizing: border-box;
-            }
-
-            #label_output {
-                float: right;
-                position:relative;
-                top: 30px;
-                left: -10px;
-            }
-        </style>
+        <meta charset="utf-8">
+        <link href="/static/css/bootstrap-combined.css" rel="stylesheet">
+        <link href="/static/css/font-awesome.css" rel="stylesheet">
+        <link href="/static/css/site.css" rel="stylesheet">
     </head>
     <body>
+        <script src="/static/js/jquery.js"></script>
+        <script src="/static/js/bootstrap.js"></script>
         <div class="container-fixed">
             <div class="navbar">
                 <div class="navbar-inner">
@@ -45,162 +17,84 @@
                 </div>
             </div>
 
-            <div class="row-fluid">
-                <div class="span6">
-                    <div id="code"></div>
-                </div>
-                <div class="span6" id="sidebar">
-                    <div class="container-fluid">
-                        <div class="navbar">
-                            <div class="navbar-inner">
-                                <ul class="nav">
-                                    <li><a id="start" href="#"><i class="icon-play"></i> Run</a></li>
-                                </ul>
-                                <form class="navbar-form pull-left">
-                                    <select id="speed">
-                                        <option value="0">~0 s/op</option>
-                                        <option value="0.2">0.2 s/op</option>
-                                        <option value="0.5">0.5 s/op</option>
-                                        <option value="1" selected>1 s/op</option>
-                                        <option value="2">2 s/op</option>
-                                        <option value="5">5 s/op</option>
-                                        <option value="10">10 s/op</option>
-                                    <select>
-                                </form>
-                            </div>
+            </div>
+<div class="container">
+
+    <div class="row">
+        <div class="span8">
+            <h1>Datastructures</h1>
+            <h3>Interactive app to experiment with algorithms</h3>
+            <p>
+                Sometimes how a data structure works? Tired of running
+                algorithms by hand? This website may help!
+            </p>
+            <p>
+                <strong>Datastructures</strong> is a web application where you
+                can learn more about classic computer science data structures
+                and algorithms. Along with their descriptions, you can run the
+                algorithm right in your browser and see how it runs
+                graphically.
+            </p>
+        </div>
+        <div class="span4" style="text-align: center">
+            <i class="icon-sitemap" style="font-size: 20em;"></i>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <div class="well welcome_well">
+                <div class="container-fluid">
+                    <div class="row-fluid">
+                        <div class="span4">
+                            <h3>
+                                <i class="icon-group"></i>
+                                Community-built
+                            </h3>
+                            <p>
+                                Everybody can contribute, all sources are
+                                available.  Whether you are a seasoned
+                                developer or a beginner, you definitely can
+                                help us to build this knowledge base!
+                            </p>
                         </div>
-                        <div class="row-fluid">
-                            <div class="span12">
-                                <div>
-                                    <div class="label" id="label_output">Output</div>
-                                    <textarea id="output" readonly></textarea>
-                                </div>
-                            </div>
+                        <div class="span4">
+                            <h3>
+                                <i class="icon-terminal"></i>
+                                Interactive
+                            </h3>
+                            <p>
+                                Want to see what happens if you change that
+                                variable like that?  You think you can optimize
+                                the process? You can edit the code right away
+                                and just press <em>Run</em>.
+                            </p>
+                        </div>
+                        <div class="span4">
+                            <h3>
+                                <i class="icon-list-ol"></i>
+                                Step by step
+                            </h3>
+                            <p>
+                                Watch the effect of every single line of
+                                Javascript code. Change the execution speed,
+                                and continue to visualize the structures you
+                                are working on.
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    <div class="row">
+        <div class="span2 offset5">
+            <a href="/list/" class="btn btn-primary btn-large btn-block">Discover now</a>
+        </div>
+    </div>
+</div>
 
-        <script src="lib/jquery-2.0.0.min.js"></script>
-        <script src="lib/bootstrap.min.js"></script>
-        <script src="lib/ace.js"></script>
-        <script>
-            var editor = null;
-            var worker = null;
-            var running = false;
+<div>
 
-            function log(msg) {
-                var output = $("#output");
-                output.val(output.val() + msg + '\n');
-            }
-
-            function load_code(name) {
-                $.ajax(name, {
-                    dataType: "text"
-                }).done(function(msg) {
-                    editor.setValue(msg);
-                    editor.gotoLine(1);
-                });
-            }
-
-            $(document).ready(function(){
-                if (typeof(Worker) === undefined) {
-                    alert("Your browser does not support web workers.\nGo home, dinausaur!");
-                    return;
-                }
-                editor = ace.edit('code');
-                editor.getSession().setUseWorker(false);
-                editor.setTheme('ace/theme/xcode');
-                editor.getSession().setMode('ace/mode/javascript');
-
-                load_code('heap/heap.js');
-
-
-                $("#start").click(function(){
-                    if (running) {
-                        return false;
-                    }
-
-                    editor.getSession().clearAnnotations();
-                    $('#output').val('');
-
-                    var lines = editor.getSession().getDocument().getAllLines().slice(0);
-                    console.log(lines);
-
-                    // check if there is just one instruction per line
-                    for (var i in lines) {
-                        var line = lines[i];
-                        line = $.trim(line);
-                        if (!line.match(/^((.*(;|{|}))||\/\/.*)$/)) {
-                            var ln = parseInt(i) + 1;
-                            log("Line " + ln + " does not ends with any of [';', '{', '}']. Abort.");
-                            log("-> " + line);
-                            editor.getSession().setAnnotations([{
-                              row: ln - 1,
-                              column: line.length,
-                              text: "Bad line",
-                              type: "error" // also warning and information
-                            }]);
-                            return;
-                        }
-                    }
-
-                    var running_lines = [];
-                    for (var i in lines) {
-                        running_lines.push(lines[i]);
-                        var tline = $.trim(lines[i]);
-                        // } else {
-                        if (tline.match(/^}?$/)) {} // don't output after blank and } lines
-                        else if (tline.match(/^\/\/.*$/)) {} // don't output after comment
-                        else {
-                            running_lines.push("update("+i+");");
-                        }
-                    }
-
-                    console.log(running_lines.join('\n'));
-
-                    var speed = parseFloat($("#speed option:selected").val());
-
-                    worker = new Worker('worker.js');
-                    worker.onmessage = function(event) {
-                        var data = JSON.parse(event.data);
-                        console.log(data);
-
-                        if (data.action === "ready") {
-                            var payload = {
-                                'action': 'perform',
-                                'lines': running_lines,
-                                'speed': speed
-                            }
-                            worker.postMessage(JSON.stringify(payload));
-                            $("#start").html('<i class="icon-spinner icon-spin icon-large"></i> Running...');
-                            running = true;
-                            editor.setReadOnly(true);
-                            $("#speed").attr('disabled', true);
-                        }
-                        else if (data.action === "done") {
-                            console.log("computation completed");
-                            $("#start").html('<i class="icon-play"></i> Run</a>');
-                            running = false;
-                            editor.setReadOnly(false);
-                            $("#speed").removeAttr('disabled');
-                        }
-                        else if (data.action === "console") {
-                            console.log("console: " + data.data);
-                            log(data.data);
-                        }
-                        else if (data.action === "line") {
-                            console.log("move to line: " + data.data);
-                            editor.setHighlightActiveLine(true);
-                            editor.gotoLine(data.data + 1, 0, false);
-                        }
-                        else {
-                            console.log("unhandled message");
-                        }
-                    }
-                });
-            });
-        </script>
+        </div>
     </body>
 </html>

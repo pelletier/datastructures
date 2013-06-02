@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Datastructures</title>
+        <meta charset="utf-8">
+        <link href="/static/css/bootstrap-combined.css" rel="stylesheet">
+        <link href="/static/css/font-awesome.css" rel="stylesheet">
+        <link href="/static/css/site.css" rel="stylesheet">
+    </head>
+    <body>
+        <script src="/static/js/jquery.js"></script>
+        <script src="/static/js/bootstrap.js"></script>
+        <div class="container-fixed">
+            <div class="navbar">
+                <div class="navbar-inner">
+                    <a class="brand" href="#">Datastructures</a>
+                </div>
+            </div>
+
+            <div class="row-fluid">
+    <div class="span6">
+        <div id="code"></div>
+    </div>
+    <div class="span6" id="sidebar">
+        <div class="container-fluid">
+            <div class="navbar">
+                <div class="navbar-inner">
+                    <ul class="nav">
+                        <li><a id="start" href="#"><i class="icon-play"></i> Run</a></li>
+                    </ul>
+                    <form class="navbar-form pull-left">
+                        <select id="speed">
+                            <option value="0">~0 s/op</option>
+                            <option value="0.2">0.2 s/op</option>
+                            <option value="0.5">0.5 s/op</option>
+                            <option value="1" selected>1 s/op</option>
+                            <option value="2">2 s/op</option>
+                            <option value="5">5 s/op</option>
+                            <option value="10">10 s/op</option>
+                        <select>
+                    </form>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div class="span12">
+                    <div>
+                        <div class="label" id="label_output">Output</div>
+                        <textarea id="output" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/js/ace.js"></script>
+<script src="/static/js/exec_js.js"></script>
+
+        </div>
+    </body>
+</html>
