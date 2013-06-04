@@ -11,13 +11,13 @@ watch:
 	nanoc view
 
 deploy: compile
-	mkdir -p /tmp/exec_js
-	cp -R output/* /tmp/exec_js
-	rm -Rf /tmp/exec_js/output
-	rm -Rf /tmp/exec_js/tmp
+	mkdir -p /tmp/datastructures
+	cp -R output/* /tmp/datastructures
+	rm -Rf /tmp/datastructures/output
+	rm -Rf /tmp/datastructures/tmp
 	git checkout gh-pages
 	rm -Rf *
-	mv /tmp/exec_js/* .
+	mv /tmp/datastructures/* .
 	git add .
 	git commit -a -m "deploy `date`"
 	git push origin gh-pages

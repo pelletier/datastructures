@@ -1,5 +1,5 @@
 var Heap = function (array) {
-    this.data = (array != undefined) ? array : [];
+    this.data = new Array(array);
     this.length = this.data.length;
 
     if (array != undefined) {
@@ -16,7 +16,7 @@ Heap.prototype.find_max = function() {
 Heap.prototype.delete_root = function() {
     if (this.length > 0) {
         this.data[0] = this.data[this.length - 1];
-        this.data = this.data.slice(0, -1);
+        this.data.drop_last()
         this.length -= 1;
         this._heapify(0);
     }
@@ -52,9 +52,7 @@ Heap.prototype._heapify = function(i) {
             largest = right;
         }
         if (largest != i) {
-            var tmp = this.data[largest];
-            this.data[largest] = this.data[i];
-            this.data[i] = tmp;
+            this.data.swap(largest, i);
             i = largest;
         } else {
             break;
