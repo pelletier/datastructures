@@ -18,25 +18,25 @@ module.exports = function(grunt) {
                 files: [
                     {expand: true, cwd: 'components/bootstrap/', src: ['less/*.less'], dest: tmp+'/bootstrap', filter: 'isFile'}, // includes files in path
                     {expand: true, cwd: 'components/bootstrap/', src: ['img/*'], dest: build, filter: 'isFile'}, // includes files in path
-                    {expand: true, cwd: 'components/bootstrap/js/', src: ['*.js'], dest: tmp+'/js/bootstrap/', filter: 'isFile'}, // includes files in path
+                    {expand: true, cwd: 'components/bootstrap/js/', src: ['*.js'], dest: build+'/js/bootstrap/', filter: 'isFile'}, // includes files in path
                     {expand: true, cwd: 'components/jquery/', src: ['jquery.js'], dest: build+'/js/', filter: 'isFile'},
                     {expand: true, cwd: 'components/angular/', src: ['angular.js'], dest: build+'/js/', filter: 'isFile'},
                     {expand: true, cwd: 'components/font-awesome/build/assets/font-awesome', src: ['css/font-awesome.css',  'font/*'], dest: build, filter: 'isFile'}, // includes files in path
                     {expand: true, cwd: 'components/ace-js-xcode/lib', src: ['*'], dest: build+'/js/', filter: 'isFile'},
-                    {expand: true, cwd: 'components/ace/build/src', src: ['ace.js'], dest: build+'/js/', filter: 'isFile'}
+                    {expand: true, cwd: 'components/ace/src-noconflict/', src: ['ace.js', 'theme-xcode.js', 'mode-javascript.js'], dest: build+'/js/', filter: 'isFile'}
                 ]
             }
         },
-        concat: {
-            options: {
-                separator: ';'
-            },
-            dist: {
-                files: {
-                    '_build/js/bootstrap.js': [tmp+'/js/bootstrap/*.js']
-                }
-            }
-        },
+        //concat: {
+            //options: {
+                //separator: ';'
+            //},
+            //dist: {
+                //files: {
+                    //'_build/js/bootstrap.js': [tmp+'/js/bootstrap/*.js']
+                //}
+            //}
+        //},
         less: {
             bootstrap: {
                 options: {
@@ -54,13 +54,13 @@ module.exports = function(grunt) {
                     sourceMap: true
                 },
                 files: {
-                    '_build/js/workers.js': 'src/js/worker.coffee',
+                    '_build/js/worker.js': 'src/js/worker.coffee',
                     '_build/js/exec.js': ['src/js/array.coffee', 'src/js/exec_js.coffee']
                 }
             }
         }
     });
 
-    grunt.registerTask('build', ['copy', 'concat', 'less', 'coffee']);
+    grunt.registerTask('build', ['copy', 'less', 'coffee']);
 };
 

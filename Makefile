@@ -1,23 +1,28 @@
+.PHONY: assets
+
 all: install
 
 deps:
 	npm install
 	bower install
 
-assets: deps
+assets:
 	grunt build
-	mkdir -p content/assets/
-	cp -R _build/* content/assets/
+	mkdir -p assets/
+	cp -R _build/* assets/
 
-compile: assets
+clean:
+	rm -Rf assets _build output components
+
+compile: 
 	nanoc compile
 
 view: compile
 	nanoc view
 
-watch: deps
-	nanoc watch &
-	nanoc view
+watch:
+	nanoc view &
+	guard
 
 deploy: install
 	mkdir -p /tmp/datastructures
@@ -35,4 +40,4 @@ deploy: install
 push: deploy
 	git push origin master
 
-install: compile
+install: deps assets compile

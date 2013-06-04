@@ -16,7 +16,7 @@ Heap.prototype.find_max = function() {
 Heap.prototype.delete_root = function() {
     if (this.length > 0) {
         this.data[0] = this.data[this.length - 1];
-        this.data.drop_last()
+        this.data.drop_last();
         this.length -= 1;
         this._heapify(0);
     }

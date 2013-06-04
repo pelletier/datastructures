@@ -1,4 +1,5 @@
-class @Array
+@DS={} if @DS is undefined
+class @DS.Array
 
     constructor: (init) ->
         @length = 0

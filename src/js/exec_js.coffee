@@ -19,7 +19,7 @@ get_parameter = (name) ->
     return decodeURIComponent(results[1].replace(/\+/g, " "))
 
 $(document).ready () =>
-    console.log('ready');
+    console.log('ready')
     if typeof(Worker) is undefined
         alert("Your browser does not support web workers.\nGo home, dinausaur!")
         return
