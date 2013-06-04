@@ -10,14 +10,12 @@
 
   log = function(msg) {
     var output;
-
     output = $("#output");
     return output.val(output.val() + msg + '\n');
   };
 
   load_code = function(name) {
     var _this = this;
-
     return $.ajax(name, {
       dataType: "text"
     }).done(function(msg) {
@@ -28,7 +26,6 @@
 
   get_parameter = function(name) {
     var regex, results;
-
     name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
     regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
     results = regex.exec(location.search);
@@ -48,7 +45,6 @@
     load_code("../static/js/algorithms/" + (get_parameter('file')));
     return $("#start").click(function() {
       var index, line, lines, ln, running_lines, speed, tline, _i, _j, _len, _len1;
-
       if (running) {
         return false;
       }
@@ -88,7 +84,6 @@
       worker = new Worker('../static/js/worker.js');
       return worker.onmessage = function(event) {
         var data, payload;
-
         data = JSON.parse(event.data);
         console.log(data);
         switch (data.action) {
@@ -124,3 +119,7 @@
   });
 
 }).call(this);
+
+/*
+//@ sourceMappingURL=exec.js.map
+*/

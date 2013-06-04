@@ -1,5 +1,5 @@
 var Heap = function (array) {
-    this.data = new Array(array);
+    this.data = new DS.Array(array);
     this.length = this.data.length;
 
     if (array != undefined) {
@@ -16,7 +16,7 @@ Heap.prototype.find_max = function() {
 Heap.prototype.delete_root = function() {
     if (this.length > 0) {
         this.data[0] = this.data[this.length - 1];
-        this.data.drop_last()
+        this.data.drop_last();
         this.length -= 1;
         this._heapify(0);
     }
@@ -30,9 +30,7 @@ Heap.prototype.insert = function(key) {
     while (index > 0) {
         var parent = Math.floor((index - 1) / 2);
         if (this.data[parent] < key) {
-            var tmp = this.data[parent];
-            this.data[parent] = this.data[index];
-            this.data[index] = tmp;
+            this.data.swap(parent, index);
         } else {
             break;
         }
