@@ -32,6 +32,7 @@
 * `/_build/` temporary folder for assets building
 * `/content/assets/` built assez ready to use by nanoc
 * `/output/` site fully built, output of nanoc
+* `/_tests/` used during tests
 
 
 ## Pipeline

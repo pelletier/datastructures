@@ -40,4 +40,7 @@ deploy: install
 push: deploy
 	git push origin master
 
+test:
+	grunt test
+
 install: deps assets compile

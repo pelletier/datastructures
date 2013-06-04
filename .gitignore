@@ -3,3 +3,5 @@ tmp
 crash.log
 components
 /assets
+_tests
+_build

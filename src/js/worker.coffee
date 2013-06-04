@@ -26,6 +26,7 @@ run = (rlines) ->
         context[p] = undefined
     context['console'] = console
     context['update'] = update
+    context['DS'] = this.DS # custom datastructures
     (new Function("with(this) { #{rlines.join('\n')} }")).call(context)
     postData(done_msg())
 

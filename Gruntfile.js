@@ -2,10 +2,12 @@ module.exports = function(grunt) {
     var assets = "content/assets";
     var build = "_build";
     var tmp = "/tmp/datastructures";
+    var tests = "_tests"
 
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-simple-mocha');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-less');
@@ -54,13 +56,22 @@ module.exports = function(grunt) {
                     sourceMap: true
                 },
                 files: {
-                    '_build/js/worker.js': 'src/js/worker.coffee',
-                    '_build/js/exec.js': ['src/js/array.coffee', 'src/js/exec_js.coffee']
+                    '_build/js/worker.js': ['src/js/array.coffee', 'src/js/worker.coffee'],
+                    '_build/js/exec.js': ['src/js/exec_js.coffee'],
+
+                    '_tests/array.js': 'src/js/array.coffee'
                 }
             }
+        },
+        simplemocha: {
+            options: {
+                "compilers": "coffee:coffee-script",
+                "reporter": "dot"
+            },
+            all: ['tests/*.coffee']
         }
     });
 
     grunt.registerTask('build', ['copy', 'less', 'coffee']);
+    grunt.registerTask('test', ['build', 'simplemocha']);
 };
-

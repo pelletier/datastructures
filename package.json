@@ -8,6 +8,7 @@
         "url": "https://github.com/pelletier/datastructures.git"
     },
     "dependencies": {
+        "mocha": "1.10.0",
         "bower": ">=0.9.2",
         "grunt": "latest",
         "grunt-cli": "latest",
@@ -17,7 +18,8 @@
         "grunt-contrib-concat": "latest",
         "grunt-contrib-copy": "latest",
         "grunt-contrib-coffee": "latest",
-        "grunt-contrib-less": "latest"
+        "grunt-contrib-less": "latest",
+        "grunt-simple-mocha": "latest"
     },
     "engine": "0.8.14"
 }
