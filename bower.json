@@ -1,0 +1,12 @@
+{
+    "name": "datastructures",
+    "version": "0.1.0",
+    "dependencies": {
+        "angular": "unstable",
+        "bootstrap": "2.3.2",
+        "font-awesome": "3.1.1",
+        "ace": "master",
+        "jquery": "2.0.1",
+        "ace-js-xcode": "pelletier/ace-js-xcode"
+    }
+}
