@@ -58,7 +58,15 @@ module.exports = function(grunt) {
                     sourceMap: true
                 },
                 files: {
-                    '_build/js/worker.js': ['src/js/array.coffee', 'src/js/worker.coffee'],
+                    '_build/js/worker.js': [
+                        'src/js/represented.coffee',
+                        'src/js/WorkerDSManager.coffee',
+                        'src/js/arraytype.coffee',
+                        'src/js/mediator.coffee',
+                        'src/js/array.coffee',
+                        'src/js/executor.coffee',
+                        'src/js/worker.coffee'
+                    ],
                     '_build/js/exec.js': ['src/js/exec_js.coffee'],
 
                     '_tests/array.js': 'src/js/array.coffee'
