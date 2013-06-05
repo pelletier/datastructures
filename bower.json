@@ -7,6 +7,7 @@
         "font-awesome": "3.1.1",
         "ace": "ajaxorg/ace-builds",
         "jquery": "2.0.1",
-        "ace-js-xcode": "pelletier/ace-js-xcode"
+        "ace-js-xcode": "pelletier/ace-js-xcode",
+        "d3": "3.1.10"
     }
 }

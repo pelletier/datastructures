@@ -22,6 +22,7 @@ module.exports = function(grunt) {
                     {expand: true, cwd: 'components/bootstrap/', src: ['img/*'], dest: build, filter: 'isFile'}, // includes files in path
                     {expand: true, cwd: 'components/bootstrap/js/', src: ['*.js'], dest: build+'/js/bootstrap/', filter: 'isFile'}, // includes files in path
                     {expand: true, cwd: 'components/jquery/', src: ['jquery.js'], dest: build+'/js/', filter: 'isFile'},
+                    {expand: true, cwd: 'components/d3/', src: ['d3.js'], dest: build+'/js/', filter: 'isFile'},
                     {expand: true, cwd: 'components/angular/', src: ['angular.js'], dest: build+'/js/', filter: 'isFile'},
                     {expand: true, cwd: 'components/font-awesome/build/assets/font-awesome', src: ['css/font-awesome.css',  'font/*'], dest: build, filter: 'isFile'}, // includes files in path
                     {expand: true, cwd: 'components/ace-js-xcode/lib', src: ['*'], dest: build+'/js/', filter: 'isFile'},
@@ -46,7 +47,8 @@ module.exports = function(grunt) {
                 },
                 files: {
                     '_build/css/bootstrap.css': tmp+'/bootstrap/less/bootstrap.less',
-                    '_build/css/site.css': 'src/css/site.less'
+                    '_build/css/site.css': 'src/css/site.less',
+                    '_build/css/viz.css': 'src/css/viz.less'
                 }
             }
         },
