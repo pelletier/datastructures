@@ -1,37 +1,3 @@
-@DS={} if @DS is undefined
-class @DS.Array
-
-    constructor: (init) ->
-        @length = 0
-
-        if init isnt undefined
-            for val, index in init
-                this[index] = val
-            @length = init.length
-
-    keys: () -> [0...@length]
-
-    push: (value) ->
-        this[@length] = value
-        @length += 1
-
-    drop: (index) ->
-        return if not valid_bounds(index)
-        if index isnt @length - 1
-            for i in [(index + 1)...@length]
-                this[i - 1] = this[i]
-        this[@length - 1] = undefined
-        @length -= 1
-
-    drop_last: () -> drop(@length - 1)
-
-    swap: (i, j) ->
-        return if not valid_bounds(i, j)
-        [this[i], this[j]] = [this[j], this[i]]
-
-    valid_bounds: (indexes...) ->
-        Math.min(indexes...) < 0 or Math.max(indexes...) >= @length
-
 editor = null
 worker = null
 running = false
@@ -107,30 +73,32 @@ $(document).ready () =>
             data = JSON.parse(event.data)
             console.log(data)
 
-            switch data.action
-                when "ready"
-                    payload = {
-                        'action': 'perform',
-                        'lines': running_lines,
-                        'speed': speed
-                    }
-                    worker.postMessage(JSON.stringify(payload))
-                    $("#start").html('<i class="icon-spinner icon-spin icon-large"></i> Running...')
-                    running = true
-                    editor.setReadOnly(true)
-                    $("#speed").attr('disabled', true)
-                when "done"
-                    console.log("computation completed")
-                    $("#start").html('<i class="icon-play"></i> Run</a>')
-                    running = false
-                    editor.setReadOnly(false)
-                    $("#speed").removeAttr('disabled')
-                when "console"
-                    console.log("console: #{data.data}")
-                    log(data.data)
-                when "line"
-                    console.log("move to line: #{data.data}")
-                    editor.setHighlightActiveLine(true)
-                    editor.gotoLine(data.data + 1, 0, false)
-                else
-                    console.log("unhandled message")
+            switch data.type
+                when 'exec'
+                    switch data.data.kind
+                        when 'log'
+                            console.log("console: #{data.data.data}")
+                            log(data.data.data)
+                        when 'update'
+                            console.log("move to line: #{data.data.data}")
+                            editor.setHighlightActiveLine(true)
+                            editor.gotoLine(data.data.data + 1, 0, false)
+                        when "run"
+                            if data.data.data is 'done'
+                                console.log("computation completed")
+                                $("#start").html('<i class="icon-play"></i> Run</a>')
+                                running = false
+                                editor.setReadOnly(false)
+                                $("#speed").removeAttr('disabled')
+                when 'main'
+                    switch data.data
+                        when 'ready'
+                            payload = {
+                                'action': 'perform',
+                                'lines': running_lines
+                            }
+                            worker.postMessage(JSON.stringify(payload))
+                            $("#start").html('<i class="icon-spinner icon-spin icon-large"></i> Running...')
+                            running = true
+                            editor.setReadOnly(true)
+                            $("#speed").attr('disabled', true)

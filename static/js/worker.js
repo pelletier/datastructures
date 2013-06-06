@@ -1,13 +1,170 @@
 (function() {
-  var console, console_msg, done_msg, line_msg, postData, ready_msg, run, sleep, speed, update,
-    __slice = [].slice,
-    _this = this;
+  var ArrayTree, Binding, DS, Executor, WORKER,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    __slice = [].slice;
+
+  if (this.WORKER === void 0) {
+    this.WORKER = {};
+  }
+
+  WORKER = this.WORKER;
+
+  this.WORKER.Represented = (function() {
+    function Represented() {}
+
+    Represented.prototype.represent_as = function(interface_name) {
+      WORKER.manager.register(this, interface_name);
+      this.notify();
+      return this;
+    };
+
+    Represented.prototype.notify = function() {
+      return WORKER.manager.notify(this);
+    };
+
+    return Represented;
+
+  })();
+
+  if (this.WORKER === void 0) {
+    this.WORKER = {
+      interfaces: {}
+    };
+  }
+
+  WORKER = this.WORKER;
+
+  Binding = (function() {
+    function Binding(object, id, _interface) {
+      this.object = object;
+      this.id = id;
+      this["interface"] = _interface;
+    }
+
+    return Binding;
+
+  })();
+
+  this.WORKER.WorkerDSManager = (function() {
+    function WorkerDSManager() {
+      if (WORKER['interfaces'] === void 0) {
+        WORKER.interfaces = {};
+      }
+      this.interfaces = WORKER.interfaces;
+      this.counter = 0;
+      this.bindings = [];
+    }
+
+    WorkerDSManager.prototype.register = function(object, interface_name) {
+      this.counter += 1;
+      return this.bindings.push(new Binding(object, this.counter, interface_name));
+    };
+
+    WorkerDSManager.prototype.notify = function(object) {
+      var binding, _i, _len, _ref, _results;
+      _ref = this.bindings;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        binding = _ref[_i];
+        if (binding.object === object) {
+          _results.push(this.send({
+            id: binding.id,
+            data: WORKER.interfaces[binding["interface"]].process(binding.object)
+          }));
+        }
+      }
+      return _results;
+    };
+
+    WorkerDSManager.prototype.send = function(data) {
+      return WORKER.mediator.send('manager', data);
+    };
+
+    return WorkerDSManager;
+
+  })();
+
+  if (this.WORKER === void 0) {
+    this.WORKER = {};
+  }
+
+  if (this.WORKER.interfaces === void 0) {
+    this.WORKER.interfaces = {};
+  }
+
+  ArrayTree = (function() {
+    function ArrayTree() {}
+
+    ArrayTree.prototype.process = function(array) {
+      this.array = array;
+      return this.to_array(0);
+    };
+
+    ArrayTree.prototype.to_array = function(i) {
+      var left_child, right_child, root;
+      if (i >= this.array.length) {
+        return null;
+      }
+      root = {
+        name: this.array[i],
+        children: []
+      };
+      left_child = this.to_array(2 * i + 1);
+      right_child = this.to_array(2 * i + 2);
+      if (left_child) {
+        root.children.push(left_child);
+      }
+      if (right_child) {
+        root.children.push(right_child);
+      }
+      return root;
+    };
+
+    return ArrayTree;
+
+  })();
+
+  this.WORKER.interfaces['array_tree'] = new ArrayTree();
+
+  if (this.WORKER === void 0) {
+    this.WORKER = {};
+  }
+
+  WORKER = this.WORKER;
+
+  this.WORKER.Mediator = (function() {
+    function Mediator() {
+      self.addEventListener('message', this.receive, false);
+    }
+
+    Mediator.prototype.receive = function(event) {
+      var data;
+      data = JSON.parse(event.data);
+      switch (data.action) {
+        case "perform":
+          return WORKER.executor.run(data.lines);
+      }
+    };
+
+    Mediator.prototype.send = function(type, data) {
+      return self.postMessage(JSON.stringify({
+        type: type,
+        data: data
+      }));
+    };
+
+    return Mediator;
+
+  })();
 
   if (this.DS === void 0) {
     this.DS = {};
   }
 
-  this.DS.Array = (function() {
+  this.DS.Array = (function(_super) {
+    __extends(Array, _super);
+
     function Array(init) {
       var index, val, _i, _len;
       this.length = 0;
@@ -31,7 +188,8 @@
 
     Array.prototype.push = function(value) {
       this[this.length] = value;
-      return this.length += 1;
+      this.length += 1;
+      return this.notify();
     };
 
     Array.prototype.drop = function(index) {
@@ -45,7 +203,8 @@
         }
       }
       this[this.length - 1] = void 0;
-      return this.length -= 1;
+      this.length -= 1;
+      return this.notify();
     };
 
     Array.prototype.drop_last = function() {
@@ -57,7 +216,8 @@
       if (!this.valid_bounds(i, j)) {
         return;
       }
-      return _ref = [this[j], this[i]], this[i] = _ref[0], this[j] = _ref[1], _ref;
+      _ref = [this[j], this[i]], this[i] = _ref[0], this[j] = _ref[1];
+      return this.notify();
     };
 
     Array.prototype.valid_bounds = function() {
@@ -68,90 +228,79 @@
 
     return Array;
 
+  })(this.WORKER.Represented);
+
+  if (this.WORKER === void 0) {
+    this.WORKER = {};
+  }
+
+  if (this.DS === void 0) {
+    this.DS = {};
+  }
+
+  DS = this.DS;
+
+  WORKER = this.WORKER;
+
+  Executor = (function() {
+    function Executor() {}
+
+    Executor.prototype.run = function(code) {
+      var context, p;
+      this.code = code;
+      context = {};
+      for (p in this) {
+        context[p] = void 0;
+      }
+      context['console'] = this._console;
+      context['update'] = this._update;
+      context['_send'] = this._send;
+      context['DS'] = DS;
+      (new Function("with(this) { " + (this.code.join('\n')) + " }")).call(context);
+      return this._send('run', 'done');
+    };
+
+    Executor.prototype._console = {
+      log: function(msg) {
+        return WORKER.mediator.send('exec', {
+          kind: 'log',
+          data: msg
+        });
+      }
+    };
+
+    Executor.prototype._update = function(i) {
+      return this._send('update', {
+        line: i
+      });
+    };
+
+    Executor.prototype._send = function(kind, data) {
+      return WORKER.mediator.send('exec', {
+        kind: kind,
+        data: data
+      });
+    };
+
+    return Executor;
+
   })();
 
-  speed = 0;
+  if (this.WORKER === void 0) {
+    self.postMessage(JSON.stringify({
+      type: 'fatal',
+      data: 'bad worker.js file'
+    }));
+    self.close();
+  }
 
-  postData = function(data) {
-    return self.postMessage(JSON.stringify(data));
-  };
+  this.WORKER.mediator = new this.WORKER.Mediator();
 
-  ready_msg = function() {
-    return {
-      action: 'ready'
-    };
-  };
+  this.WORKER.executor = new Executor();
 
-  done_msg = function() {
-    return {
-      action: 'done'
-    };
-  };
+  this.WORKER.manager = new this.WORKER.WorkerDSManager();
 
-  console_msg = function(msg) {
-    return {
-      action: 'console',
-      data: msg
-    };
-  };
-
-  line_msg = function(i) {
-    return {
-      action: 'line',
-      data: i
-    };
-  };
-
-  sleep = function(amount) {
-    var start, _results;
-    start = new Date().getTime();
-    _results = [];
-    while (true) {
-      if ((new Date().getTime() - start) > amount) {
-        break;
-      } else {
-        _results.push(void 0);
-      }
-    }
-    return _results;
-  };
-
-  console = {
-    log: function(msg) {
-      return postData(console_msg(msg));
-    }
-  };
-
-  update = function(i) {
-    postData(line_msg(i));
-    return sleep(speed);
-  };
-
-  run = function(rlines) {
-    var context, p;
-    context = {};
-    for (p in this) {
-      context[p] = void 0;
-    }
-    context['console'] = console;
-    context['update'] = update;
-    context['DS'] = this.DS;
-    (new Function("with(this) { " + (rlines.join('\n')) + " }")).call(context);
-    return postData(done_msg());
-  };
-
-  self.addEventListener('message', function(event) {
-    var data;
-    data = JSON.parse(event.data);
-    if (data.action === 'perform') {
-      speed = data.speed * 1000;
-      return run(data.lines);
-    } else {
-      return console.log("unknown message: " + data);
-    }
-  }, false);
-
-  postData(ready_msg());
+  this.WORKER.mediator.send('main', 'ready');
 
 }).call(this);
 

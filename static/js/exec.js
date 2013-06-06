@@ -44,7 +44,7 @@
     editor.getSession().setMode('ace/mode/javascript');
     load_code("../static/js/algorithms/" + (get_parameter('file')));
     return $("#start").click(function() {
-      var index, line, lines, ln, running_lines, speed, tline, _i, _j, _len, _len1;
+      var index, line, lines, ln, running_lines, speed, states, timer, tline, update_func, _i, _j, _len, _len1;
       if (running) {
         return false;
       }
@@ -80,39 +80,68 @@
         }
       }
       console.log(running_lines.join('\n'));
-      speed = parseFloat($("#speed option:selected").val());
+      speed = parseFloat($("#speed option:selected").val()) * 1000;
+      states = [];
+      timer = null;
+      update_func = function() {
+        var state;
+        while (states.length > 0 && states[0]['line'] === void 0) {
+          state = states.shift();
+          if (state['log'] !== void 0) {
+            log(state.log);
+          }
+        }
+        if (states.length > 0) {
+          state = states.shift();
+          editor.setHighlightActiveLine(true);
+          editor.gotoLine(state.line + 1, 0, false);
+          return setTimeout(update_func, speed);
+        } else if (running) {
+          return setTimeout(update_func, speed);
+        }
+      };
       worker = new Worker('../static/js/worker.js');
       return worker.onmessage = function(event) {
         var data, payload;
         data = JSON.parse(event.data);
         console.log(data);
-        switch (data.action) {
-          case "ready":
-            payload = {
-              'action': 'perform',
-              'lines': running_lines,
-              'speed': speed
-            };
-            worker.postMessage(JSON.stringify(payload));
-            $("#start").html('<i class="icon-spinner icon-spin icon-large"></i> Running...');
-            running = true;
-            editor.setReadOnly(true);
-            return $("#speed").attr('disabled', true);
-          case "done":
-            console.log("computation completed");
-            $("#start").html('<i class="icon-play"></i> Run</a>');
-            running = false;
-            editor.setReadOnly(false);
-            return $("#speed").removeAttr('disabled');
-          case "console":
-            console.log("console: " + data.data);
-            return log(data.data);
-          case "line":
-            console.log("move to line: " + data.data);
-            editor.setHighlightActiveLine(true);
-            return editor.gotoLine(data.data + 1, 0, false);
-          default:
-            return console.log("unhandled message");
+        switch (data.type) {
+          case 'exec':
+            switch (data.data.kind) {
+              case 'log':
+                console.log("console: " + data.data.data);
+                return states.push({
+                  log: data.data.data
+                });
+              case 'update':
+                console.log("move to line: " + data.data.data.line);
+                return states.push({
+                  line: data.data.data.line
+                });
+              case "run":
+                if (data.data.data === 'done') {
+                  console.log("computation completed");
+                  $("#start").html('<i class="icon-play"></i> Run</a>');
+                  running = false;
+                  editor.setReadOnly(false);
+                  return $("#speed").removeAttr('disabled');
+                }
+            }
+            break;
+          case 'main':
+            switch (data.data) {
+              case 'ready':
+                payload = {
+                  'action': 'perform',
+                  'lines': running_lines
+                };
+                worker.postMessage(JSON.stringify(payload));
+                $("#start").html('<i class="icon-spinner icon-spin icon-large"></i> Running...');
+                running = true;
+                editor.setReadOnly(true);
+                $("#speed").attr('disabled', true);
+                return update_func();
+            }
         }
       };
     });
