@@ -1,5 +1,5 @@
 var Heap = function (array) {
-    this.data = new DS.Array(array);
+    this.data = new DS.Array(array).represent_as('array_tree');
     this.length = this.data.length;
 
     if (array != undefined) {

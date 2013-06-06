@@ -12,10 +12,10 @@ class ArrayTree
             name: @array[i]
             children: []
         }
-        left_child = to_array(2*i + 1)
-        right_child = to_array(2*i + 2)
-        root.childrend.push(left_child) if left_child
-        root.childrend.push(right_child) if right_child
+        left_child = @to_array(2*i + 1)
+        right_child = @to_array(2*i + 2)
+        root.children.push(left_child) if left_child
+        root.children.push(right_child) if right_child
         return root
 
 
