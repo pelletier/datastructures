@@ -59,17 +59,19 @@ module.exports = function(grunt) {
                 },
                 files: {
                     '_build/js/worker.js': [
-                        'src/js/represented.coffee',
-                        'src/js/WorkerDSManager.coffee',
-                        'src/js/arraytree.coffee',
-                        'src/js/mediator.coffee',
-                        'src/js/array.coffee',
-                        'src/js/executor.coffee',
-                        'src/js/worker.coffee'
+                        'src/js/worker/represented.coffee',
+                        'src/js/worker/WorkerDSManager.coffee',
+                        'src/js/worker/arraytree.coffee',
+                        'src/js/worker/mediator.coffee',
+                        'src/js/worker/array.coffee',
+                        'src/js/worker/executor.coffee',
+                        'src/js/worker/worker.coffee'
                     ],
-                    '_build/js/exec.js': ['src/js/exec_js.coffee'],
+                    '_build/js/exec.js': [
+                        'src/js/exec_js/exec_js.coffee'
+                    ],
 
-                    '_tests/array.js': 'src/js/array.coffee'
+                    '_tests/array.js': 'src/js/worker/array.coffee'
                 }
             }
         },
