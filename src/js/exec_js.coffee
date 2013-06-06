@@ -73,30 +73,32 @@ $(document).ready () =>
             data = JSON.parse(event.data)
             console.log(data)
 
-            switch data.action
-                when "ready"
-                    payload = {
-                        'action': 'perform',
-                        'lines': running_lines,
-                        'speed': speed
-                    }
-                    worker.postMessage(JSON.stringify(payload))
-                    $("#start").html('<i class="icon-spinner icon-spin icon-large"></i> Running...')
-                    running = true
-                    editor.setReadOnly(true)
-                    $("#speed").attr('disabled', true)
-                when "done"
-                    console.log("computation completed")
-                    $("#start").html('<i class="icon-play"></i> Run</a>')
-                    running = false
-                    editor.setReadOnly(false)
-                    $("#speed").removeAttr('disabled')
-                when "console"
-                    console.log("console: #{data.data}")
-                    log(data.data)
-                when "line"
-                    console.log("move to line: #{data.data}")
-                    editor.setHighlightActiveLine(true)
-                    editor.gotoLine(data.data + 1, 0, false)
-                else
-                    console.log("unhandled message")
+            switch data.type
+                when 'exec'
+                    switch data.data.kind
+                        when 'log'
+                            console.log("console: #{data.data.data}")
+                            log(data.data.data)
+                        when 'update'
+                            console.log("move to line: #{data.data.data.line}")
+                            editor.setHighlightActiveLine(true)
+                            editor.gotoLine(data.data.data.line + 1, 0, false)
+                        when "run"
+                            if data.data.data is 'done'
+                                console.log("computation completed")
+                                $("#start").html('<i class="icon-play"></i> Run</a>')
+                                running = false
+                                editor.setReadOnly(false)
+                                $("#speed").removeAttr('disabled')
+                when 'main'
+                    switch data.data
+                        when 'ready'
+                            payload = {
+                                'action': 'perform',
+                                'lines': running_lines
+                            }
+                            worker.postMessage(JSON.stringify(payload))
+                            $("#start").html('<i class="icon-spinner icon-spin icon-large"></i> Running...')
+                            running = true
+                            editor.setReadOnly(true)
+                            $("#speed").attr('disabled', true)

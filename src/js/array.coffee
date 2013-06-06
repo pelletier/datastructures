@@ -9,7 +9,6 @@ class @DS.Array extends @WORKER.Represented
             for val, index in init
                 this[index] = val
             @length = init.length
-        @notify()
 
     keys: () -> [0...@length]
 

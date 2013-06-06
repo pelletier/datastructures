@@ -6,6 +6,7 @@ if @WORKER is undefined
 
 
 @WORKER.mediator = new @WORKER.Mediator()
+@WORKER.executor = new Executor()
 @WORKER.manager = new @WORKER.WorkerDSManager()
 
 @WORKER.mediator.send('main', 'ready')
