@@ -66,7 +66,23 @@ $(document).ready () =>
 
         console.log(running_lines.join('\n'))
 
-        speed = parseFloat($("#speed option:selected").val())
+        speed = parseFloat($("#speed option:selected").val()) * 1000
+
+        states = []
+        timer = null
+
+        update_func = () ->
+            while states.length > 0  and states[0]['line'] is undefined
+                state = states.shift()
+                if state['log'] isnt undefined
+                    log(state.log)
+            if states.length > 0
+                state = states.shift()
+                editor.setHighlightActiveLine(true)
+                editor.gotoLine(state.line + 1, 0, false)
+                setTimeout(update_func, speed)
+            else if running
+                setTimeout(update_func, speed)
 
         worker = new Worker('../static/js/worker.js')
         worker.onmessage = (event) =>
@@ -78,11 +94,10 @@ $(document).ready () =>
                     switch data.data.kind
                         when 'log'
                             console.log("console: #{data.data.data}")
-                            log(data.data.data)
+                            states.push({log: data.data.data})
                         when 'update'
                             console.log("move to line: #{data.data.data.line}")
-                            editor.setHighlightActiveLine(true)
-                            editor.gotoLine(data.data.data.line + 1, 0, false)
+                            states.push({line: data.data.data.line})
                         when "run"
                             if data.data.data is 'done'
                                 console.log("computation completed")
@@ -102,3 +117,4 @@ $(document).ready () =>
                             running = true
                             editor.setReadOnly(true)
                             $("#speed").attr('disabled', true)
+                            update_func()
