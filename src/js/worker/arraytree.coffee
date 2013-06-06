@@ -9,7 +9,7 @@ class ArrayTree
     to_array: (i) ->
         return null if i >= @array.length
         root = {
-            name: @array[i]
+            name: @array[i].toString()
             children: []
         }
         left_child = @to_array(2*i + 1)

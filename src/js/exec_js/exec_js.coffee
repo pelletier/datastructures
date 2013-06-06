@@ -1,4 +1,5 @@
 editor = null
+representations = null
 worker = null
 running = false
 
@@ -71,11 +72,18 @@ $(document).ready () =>
         states = []
         timer = null
 
+        representations = {}
+        visualizations = {
+            "array_tree": VizTree
+        }
+
         update_func = () ->
             while states.length > 0  and states[0]['line'] is undefined
                 state = states.shift()
                 if state['log'] isnt undefined
                     log(state.log)
+                else if state['repr_id'] isnt undefined
+                    representations[state.repr_id].draw(state.data)
             if states.length > 0
                 state = states.shift()
                 editor.setHighlightActiveLine(true)
@@ -118,3 +126,12 @@ $(document).ready () =>
                             editor.setReadOnly(true)
                             $("#speed").attr('disabled', true)
                             update_func()
+                when 'manager'
+                    console.log(data)
+                    switch data.data.kind
+                        when 'register'
+                            console.log("registered #{data.data.id}")
+                            representations[data.data.id] = new visualizations[data.data.interface]()
+                        when 'update'
+                            console.log("updating #{data.data.id}")
+                            states.push({repr_id: data.data.id, data: data.data.data})
