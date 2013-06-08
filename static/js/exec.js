@@ -98,6 +98,12 @@
             log(state.log);
           } else if (state['repr_id'] !== void 0) {
             representations[state.repr_id].draw(state.data);
+          } else if (state['exec'] !== void 0) {
+            console.log("computation completed");
+            $("#start").html('<i class="icon-play"></i> Run</a>');
+            running = false;
+            editor.setReadOnly(false);
+            $("#speed").removeAttr('disabled');
           }
         }
         if (states.length > 0) {
@@ -129,11 +135,9 @@
                 });
               case "run":
                 if (data.data.data === 'done') {
-                  console.log("computation completed");
-                  $("#start").html('<i class="icon-play"></i> Run</a>');
-                  running = false;
-                  editor.setReadOnly(false);
-                  return $("#speed").removeAttr('disabled');
+                  return states.push({
+                    exec: 'done'
+                  });
                 }
             }
             break;

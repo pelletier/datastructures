@@ -84,6 +84,12 @@ $(document).ready () =>
                     log(state.log)
                 else if state['repr_id'] isnt undefined
                     representations[state.repr_id].draw(state.data)
+                else if state['exec'] isnt undefined
+                    console.log("computation completed")
+                    $("#start").html('<i class="icon-play"></i> Run</a>')
+                    running = false
+                    editor.setReadOnly(false)
+                    $("#speed").removeAttr('disabled')
             if states.length > 0
                 state = states.shift()
                 editor.setHighlightActiveLine(true)
@@ -108,11 +114,7 @@ $(document).ready () =>
                             states.push({line: data.data.data.line})
                         when "run"
                             if data.data.data is 'done'
-                                console.log("computation completed")
-                                $("#start").html('<i class="icon-play"></i> Run</a>')
-                                running = false
-                                editor.setReadOnly(false)
-                                $("#speed").removeAttr('disabled')
+                                states.push({exec: 'done'})
                 when 'main'
                     switch data.data
                         when 'ready'
