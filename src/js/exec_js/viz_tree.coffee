@@ -1,6 +1,6 @@
 class VizTree
 
-    constructor: () ->
+    constructor: (@speed) ->
         @width = 400
         @height = 400
         @svg = d3.select("#representations").append('div').attr('class', 'viz graph')
@@ -17,23 +17,47 @@ class VizTree
                 @compute_radius(b)
                 return a.rad + b.rad + 10) # at least 10px between nodes
 
+    get_parent: (el) -> d3.select(d3.select(el).node().parentNode)
+
     draw: (data) ->
-        @nodes = @tree.nodes(data)
-        @links = @tree.links(@nodes)
+        bound = this
+        nodes = @tree.nodes(data)
+        links = @tree.links(nodes)
 
         # draw edges
-        link = d3.svg.diagonal()
-            .projection (d) -> [d.x, d.y]
+        diag = d3.svg.diagonal().projection((d) -> [d.x, d.y])
         @svg.selectAll('path.link')
-            .data(@links)
+            .data(links)
             .enter()
             .append('svg:path')
             .attr('class', 'link')
-            .attr('d', link)
+            .attr('d', diag)
+
+        @svg.selectAll('g.node')
+            .data(nodes)
+            .select('text')
+            .transition()
+            .text((d) ->
+                old = d3.select(this).text()
+                if old isnt d.name
+                    bound.get_parent(this).select('circle').classed('dirty', true)
+                return d.name)
+
+        @svg.selectAll('g.node')
+            .data(nodes)
+            .select('circle.dirty')
+            .classed('dirty', false)
+            .transition()
+            .duration(@speed/2)
+            .style('fill', '#049cdb')
+            .transition()
+            .duration(@speed/2)
+            .style('fill', 'white')
+
 
         # draw nodes
         nodeGroup = @svg.selectAll('g.node')
-            .data(@nodes)
+            .data(nodes)
             .enter()
             .append('svg:g')
             .attr('class', 'node')
@@ -54,10 +78,10 @@ class VizTree
 
     compute_radius: (d) =>
         return d.rad if d.rad isnt undefined
-        @svg.append("svg:text").text(d.name)
-        bbox = @svg.select('text')[0][0].getBBox()
+        @svg.append("svg:text").attr('class', 'tmp').text(d.name)
+        bbox = @svg.select('text.tmp')[0][0].getBBox()
         rad = (Math.max(bbox.width, bbox.height) + 20) / 2
-        @svg.select('text').remove()
+        @svg.select('text.tmp').remove()
         d.rad = rad
         d.bbox = bbox
         return rad
