@@ -58,7 +58,12 @@
 
     WorkerDSManager.prototype.register = function(object, interface_name) {
       this.counter += 1;
-      return this.bindings.push(new Binding(object, this.counter, interface_name));
+      this.bindings.push(new Binding(object, this.counter, interface_name));
+      return this.send({
+        id: this.counter,
+        kind: 'register',
+        "interface": interface_name
+      });
     };
 
     WorkerDSManager.prototype.notify = function(object) {
@@ -70,6 +75,7 @@
         if (binding.object === object) {
           _results.push(this.send({
             id: binding.id,
+            kind: 'update',
             data: WORKER.interfaces[binding["interface"]].process(binding.object)
           }));
         }
@@ -107,7 +113,7 @@
         return null;
       }
       root = {
-        name: this.array[i],
+        name: this.array[i].toString(),
         children: []
       };
       left_child = this.to_array(2 * i + 1);

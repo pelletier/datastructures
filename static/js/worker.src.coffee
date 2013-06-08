@@ -30,11 +30,17 @@ class @WORKER.WorkerDSManager
     register: (object, interface_name) ->
         @counter += 1
         @bindings.push(new Binding(object, @counter, interface_name))
+        @send({
+            id: @counter,
+            kind: 'register',
+            interface: interface_name
+        })
 
     notify: (object) ->
         for binding in @bindings when binding.object is object
             @send({
                 id: binding.id,
+                kind: 'update',
                 data: WORKER.interfaces[binding.interface].process(binding.object)
             })
 
@@ -52,7 +58,7 @@ class ArrayTree
     to_array: (i) ->
         return null if i >= @array.length
         root = {
-            name: @array[i]
+            name: @array[i].toString()
             children: []
         }
         left_child = @to_array(2*i + 1)
