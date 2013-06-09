@@ -59,5 +59,11 @@ Heap.prototype._heapify = function(i) {
     }
 }
 
-var heap = new Heap([4,5,1,9]);
-console.log("max=" + heap.find_max());
+var heap = new Heap();
+for (var i = 0; i < 10; ++i) {
+    heap.insert(Math.floor(Math.random() * 20));
+}
+for (var i = 0; i < 3; ++i) {
+    console.log("max=" + heap.find_max());
+    heap.delete_root();
+}
