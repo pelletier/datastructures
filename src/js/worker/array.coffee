@@ -1,4 +1,8 @@
 @DS={} if @DS is undefined
+if @WORKER is undefined
+    class Represented
+        notify: () ->
+    @WORKER = {Represented: Represented}
 
 class @DS.Array extends @WORKER.Represented
 
