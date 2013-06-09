@@ -17,64 +17,13 @@ class VizTree
                 @compute_radius(b)
                 return a.rad + b.rad + 10) # at least 10px between nodes
 
+        @diagonal = d3.svg.diagonal()
+
     get_parent: (el) -> d3.select(d3.select(el).node().parentNode)
 
-    draw: (data) ->
-        bound = this
-        nodes = @tree.nodes(data)
-        links = @tree.links(nodes)
-
-        # draw edges
-        diag = d3.svg.diagonal().projection((d) -> [d.x, d.y])
-        @svg.selectAll('path.link')
-            .data(links)
-            .enter()
-            .append('svg:path')
-            .attr('class', 'link')
-            .attr('d', diag)
-
-        @svg.selectAll('g.node')
-            .data(nodes)
-            .select('text')
-            .transition()
-            .text((d) ->
-                old = d3.select(this).text()
-                if old isnt d.name
-                    bound.get_parent(this).select('circle').classed('dirty', true)
-                return d.name)
-
-        @svg.selectAll('g.node')
-            .data(nodes)
-            .select('circle.dirty')
-            .classed('dirty', false)
-            .transition()
-            .duration(@speed/2)
-            .style('fill', '#049cdb')
-            .transition()
-            .duration(@speed/2)
-            .style('fill', 'white')
-
-
-        # draw nodes
-        nodeGroup = @svg.selectAll('g.node')
-            .data(nodes)
-            .enter()
-            .append('svg:g')
-            .attr('class', 'node')
-            .attr('transform', (d) -> "translate(#{d.x}, #{d.y})")
-
-        nodeGroup.append("svg:circle")
-            .attr("class", "node-dot")
-            .attr('r', @compute_radius)
-
-        # draw text
-        nodeGroup.append("svg:text")
-            .attr('x', (d) =>
-                  @compute_radius(d)
-                  console.log(d.rad)
-                  return -d.bbox.width / 2)
-            .attr('dy', (d) -> 5)
-            .text((d) -> d.name)
+    null_diagonal: (d) ->
+        o = {x: d.source.x, y: d.source.y}
+        d3.svg.diagonal()({source: o, target: o})
 
     compute_radius: (d) =>
         return d.rad if d.rad isnt undefined
@@ -85,3 +34,93 @@ class VizTree
         d.rad = rad
         d.bbox = bbox
         return rad
+
+    draw: (data) ->
+        bound = this
+        nodes = @tree.nodes(data)
+        links = @tree.links(nodes)
+        exited = false
+
+        # Create entering nodes
+        nodes_group = @svg.selectAll('g.node')
+            .data(nodes)
+            .enter()
+            .append('svg:g')
+                .attr('class', 'node')
+                .attr('transform', (d) -> "translate(#{d.x}, #{d.y})")
+        nodes_group.append('svg:circle')
+            .attr('class', 'circle')
+            .attr('r', 0)
+        nodes_group.append('svg:text')
+            .style('opacity', 0)
+
+        @svg.selectAll('g.node')
+            .data(nodes)
+            .select('text')
+            .text((d) ->
+                that = d3.select(this)
+                old = that.text()
+                if old != d.name # != not !==
+                    bound.get_parent(this).select('circle').classed('dirty', true)
+                return d.name)
+
+        # Remove exiting links
+        @svg.selectAll('path.link')
+            .data(links)
+            .exit()
+            .classed('remove', true)
+            .classed('ready', false)
+            .each(() -> exited = true)
+
+        # Remove exiting nodes
+        @svg.selectAll('g.node')
+            .data(nodes)
+            .exit()
+            .classed('remove', true)
+            .each(() -> exited = true)
+
+        # Create entering links
+        @svg.selectAll('path.link')
+            .data(links)
+            .enter()
+            .insert('svg:path', 'g.node')
+            .attr('class', 'link')
+            .attr('d', @null_diagonal)
+
+        # Remove exiting elements
+        t0 = @svg
+        if exited
+            t0 = @svg.transition().duration(1000)
+            t0.selectAll('.link.remove')
+                .attr('d', @null_diagonal)
+            t0.selectAll('.node.remove')
+                .style('opacity', 0)
+
+        t1 = t0.transition().duration(1000)
+        t1.selectAll('.node')
+            .attr('transform', (d) -> "translate(#{d.x}, #{d.y})")
+        t1.selectAll('.node circle.dirty')
+            .style('fill', '#049cdb')
+        t1.selectAll('.link.ready')
+            .attr('d', @diagonal)
+
+        t2 = t1.transition().duration(1000)
+        t2.selectAll('.node circle')
+            .attr('r', @compute_radius)
+        t2.selectAll('.node text')
+            .attr('x', (d) =>
+                @compute_radius(d)
+                return -d.bbox.width / 2)
+            .attr('dy', (d) -> 5)
+            .delay(if exited then 2300 else 1300) # different delay depending on t0
+            .duration(700)
+            .style('opacity', 1)
+        t2.selectAll('.link:not(.remove)')
+            .attr('d', @diagonal)
+            .each((d) -> d3.select(this).classed('ready', true))
+        t2.selectAll('.node circle.dirty')
+            .style('fill', 'white')
+            .each((d) -> d3.select(this).classed('dirty', false))
+
+        # remove elements fromt the DOM tree
+        t2.each('end', () -> bound.svg.selectAll('.remove').remove())
