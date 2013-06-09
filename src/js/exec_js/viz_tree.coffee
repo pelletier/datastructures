@@ -88,15 +88,18 @@ class VizTree
             .attr('d', @null_diagonal)
 
         # Remove exiting elements
+        step = @speed * 2 # could be / 3
+        max_step = (x) -> if x > step then step else x
+        min_zero = (x) -> if x < 0 then 0 else x
         t0 = @svg
         if exited
-            t0 = @svg.transition().duration(1000)
+            t0 = @svg.transition().duration(step)
             t0.selectAll('.link.remove')
                 .attr('d', @null_diagonal)
             t0.selectAll('.node.remove')
                 .style('opacity', 0)
 
-        t1 = t0.transition().duration(1000)
+        t1 = t0.transition().duration(step)
         t1.selectAll('.node')
             .attr('transform', (d) -> "translate(#{d.x}, #{d.y})")
         t1.selectAll('.node circle.dirty')
@@ -104,7 +107,7 @@ class VizTree
         t1.selectAll('.link.ready')
             .attr('d', @diagonal)
 
-        t2 = t1.transition().duration(1000)
+        t2 = t1.transition().duration(step)
         t2.selectAll('.node circle')
             .attr('r', @compute_radius)
         t2.selectAll('.node text')
@@ -112,8 +115,8 @@ class VizTree
                 @compute_radius(d)
                 return -d.bbox.width / 2)
             .attr('dy', (d) -> 5)
-            .delay(if exited then 2300 else 1300) # different delay depending on t0
-            .duration(700)
+            .delay(max_step((if exited then 2*step else step) + 300)) # different delay depending on t0
+            .duration(min_zero(step - 300))
             .style('opacity', 1)
         t2.selectAll('.link:not(.remove)')
             .attr('d', @diagonal)
