@@ -228,8 +228,12 @@
     };
 
     VizTree.prototype.draw = function(data) {
-      var bound, exited, links, nodes, nodes_group, t0, t1, t2,
+      var bound, exited, links, max_step, min_zero, nodes, nodes_group, step, t0, t1, t2,
         _this = this;
+      if (data === null) {
+        this.svg.selectAll('*').remove();
+        return;
+      }
       bound = this;
       nodes = this.tree.nodes(data);
       links = this.tree.links(nodes);
@@ -255,26 +259,41 @@
         return exited = true;
       });
       this.svg.selectAll('path.link').data(links).enter().insert('svg:path', 'g.node').attr('class', 'link').attr('d', this.null_diagonal);
+      step = this.speed * 2;
+      max_step = function(x) {
+        if (x > step) {
+          return step;
+        } else {
+          return x;
+        }
+      };
+      min_zero = function(x) {
+        if (x < 0) {
+          return 0;
+        } else {
+          return x;
+        }
+      };
       t0 = this.svg;
       if (exited) {
-        t0 = this.svg.transition().duration(1000);
+        t0 = this.svg.transition().duration(step);
         t0.selectAll('.link.remove').attr('d', this.null_diagonal);
         t0.selectAll('.node.remove').style('opacity', 0);
       }
-      t1 = t0.transition().duration(1000);
+      t1 = t0.transition().duration(step);
       t1.selectAll('.node').attr('transform', function(d) {
         return "translate(" + d.x + ", " + d.y + ")";
       });
       t1.selectAll('.node circle.dirty').style('fill', '#049cdb');
       t1.selectAll('.link.ready').attr('d', this.diagonal);
-      t2 = t1.transition().duration(1000);
+      t2 = t1.transition().duration(step);
       t2.selectAll('.node circle').attr('r', this.compute_radius);
       t2.selectAll('.node text').attr('x', function(d) {
         _this.compute_radius(d);
         return -d.bbox.width / 2;
       }).attr('dy', function(d) {
         return 5;
-      }).delay(exited ? 2300 : 1300).duration(700).style('opacity', 1);
+      }).delay(max_step((exited ? 2 * step : step) + 300)).duration(min_zero(step - 300)).style('opacity', 1);
       t2.selectAll('.link:not(.remove)').attr('d', this.diagonal).each(function(d) {
         return d3.select(this).classed('ready', true);
       });
