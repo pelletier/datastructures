@@ -37,6 +37,7 @@ $(document).ready () =>
 
         editor.getSession().clearAnnotations()
         $('#output').val('')
+        $('#representations svg').remove()
 
         lines = editor.getSession().getDocument().getAllLines()[..]
         console.log(lines)

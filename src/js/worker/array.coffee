@@ -14,6 +14,9 @@ class @DS.Array extends @WORKER.Represented
                 this[index] = val
             @length = init.length
 
+        if @length isnt 0
+            @notify()
+
     keys: () -> [0...@length]
 
     push: (value) ->
