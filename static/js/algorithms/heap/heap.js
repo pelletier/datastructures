@@ -31,6 +31,7 @@ Heap.prototype.insert = function(key) {
         var parent = Math.floor((index - 1) / 2);
         if (this.data[parent] < key) {
             this.data.swap(parent, index);
+            index = parent;
         } else {
             break;
         }

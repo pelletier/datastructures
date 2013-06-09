@@ -5,7 +5,7 @@
   fill: none;
   stroke: #000;
 }
-.viz.graph .node-dot {
+.viz.graph .node .circle {
   stroke: #000;
   stroke-width: 2px;
   fill: #fff;

@@ -1,5 +1,5 @@
 (function() {
-  var ArrayTree, Binding, DS, Executor, WORKER,
+  var ArrayTree, Binding, DS, Executor, Represented, WORKER,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     __slice = [].slice;
@@ -168,6 +168,20 @@
     this.DS = {};
   }
 
+  if (this.WORKER === void 0) {
+    Represented = (function() {
+      function Represented() {}
+
+      Represented.prototype.notify = function() {};
+
+      return Represented;
+
+    })();
+    this.WORKER = {
+      Represented: Represented
+    };
+  }
+
   this.DS.Array = (function(_super) {
     __extends(Array, _super);
 
@@ -180,6 +194,9 @@
           this[index] = val;
         }
         this.length = init.length;
+      }
+      if (this.length !== 0) {
+        this.notify();
       }
     }
 

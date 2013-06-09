@@ -92,6 +92,10 @@ class @WORKER.Mediator
         self.postMessage(JSON.stringify({type: type, data: data}))
 
 @DS={} if @DS is undefined
+if @WORKER is undefined
+    class Represented
+        notify: () ->
+    @WORKER = {Represented: Represented}
 
 class @DS.Array extends @WORKER.Represented
 
@@ -102,6 +106,9 @@ class @DS.Array extends @WORKER.Represented
             for val, index in init
                 this[index] = val
             @length = init.length
+
+        if @length isnt 0
+            @notify()
 
     keys: () -> [0...@length]
 
