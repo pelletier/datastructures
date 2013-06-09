@@ -36,6 +36,10 @@ class VizTree
         return rad
 
     draw: (data) ->
+        if data is null
+            @svg.selectAll('*').remove()
+            return
+
         bound = this
         nodes = @tree.nodes(data)
         links = @tree.links(nodes)
