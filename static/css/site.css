@@ -1,5 +1,5 @@
 #code {
-  width: 50%;
+  width: 40%;
   position: absolute;
   top: 62px;
   right: 0;
@@ -7,7 +7,7 @@
   left: 0;
 }
 #sidebar {
-  width: 50%;
+  width: 60%;
   float: right;
   position: relative;
   top: -30px;

@@ -163,7 +163,7 @@
             switch (data.data.kind) {
               case 'register':
                 height = 400;
-                width = 300;
+                width = 390;
                 return representations[data.data.id] = new visualizations[data.data["interface"]](speed, width, height);
               case 'update':
                 console.log("updating " + data.data.id);
@@ -376,7 +376,7 @@
     };
 
     VizArray.prototype.draw = function(data) {
-      var block_x, block_y, exited, fsize, new_data, rectGroup, sel, size, t0, t1, x_level, y_level,
+      var block_x, block_y, exited, fsize, new_data, rectGroup, sel, size, step, t0, t1, x_level, y_level,
         _this = this;
       new_data = this.morph_data(data, this.old_data);
       this.old_data = new_data;
@@ -413,7 +413,8 @@
         rad = _this.compute_radius(d.value, fsize);
         return size / 2 + rad.height / 4;
       });
-      t0 = this.svg.transition().duration(1000);
+      step = this.speed * 2;
+      t0 = this.svg.transition().duration(step);
       if (exited) {
         t0.selectAll('g.rect[exit]').attr('transform', function(d, i) {
           var v, x;
@@ -427,7 +428,7 @@
             0: 1
           };
         });
-        t0 = t0.transition().duration(1000);
+        t0 = t0.transition().duration(step);
       }
       t0.selectAll('g.rect').attr('transform', function(d, i) {
         var v, y;
@@ -446,7 +447,7 @@
         return size / 2 + rad.height / 4;
       });
       t0.selectAll('g.rect').select('rect').attr('width', size).attr('height', size);
-      t1 = t0.transition().duration(1000);
+      t1 = t0.transition().duration(step);
       t1.selectAll('g.rect').attr('transform', function() {
         var v, x;
         v = d3.select(this).attr('target_y') || y_level(1);
