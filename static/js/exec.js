@@ -1,5 +1,5 @@
 (function() {
-  var VizTree, editor, get_parameter, load_code, log, representations, running, worker,
+  var VizArray, VizTree, editor, get_parameter, load_code, log, representations, running, worker,
     _this = this,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
@@ -89,7 +89,8 @@
       timer = null;
       representations = {};
       visualizations = {
-        "array_tree": VizTree
+        "array_tree": VizTree,
+        "array_array": VizArray
       };
       update_func = function() {
         var state;
@@ -118,7 +119,7 @@
       };
       worker = new Worker('../static/js/worker.js');
       return worker.onmessage = function(event) {
-        var data, payload;
+        var data, height, payload, width;
         data = JSON.parse(event.data);
         console.log(data);
         switch (data.type) {
@@ -161,8 +162,9 @@
             console.log(data);
             switch (data.data.kind) {
               case 'register':
-                console.log("registered " + data.data.id);
-                return representations[data.data.id] = new visualizations[data.data["interface"]](speed);
+                height = 400;
+                width = 300;
+                return representations[data.data.id] = new visualizations[data.data["interface"]](speed, width, height);
               case 'update':
                 console.log("updating " + data.data.id);
                 return states.push({
@@ -176,12 +178,12 @@
   });
 
   VizTree = (function() {
-    function VizTree(speed) {
+    function VizTree(speed, width, height) {
       var _this = this;
       this.speed = speed;
+      this.width = width;
+      this.height = height;
       this.compute_radius = __bind(this.compute_radius, this);
-      this.width = 400;
-      this.height = 400;
       this.svg = d3.select("#representations").append('div').attr('class', 'viz graph').append("svg").attr('width', this.width).attr('height', this.height).append('g').attr('transform', "translate(50,50)");
       this.tree = d3.layout.tree().size([this.width - 100, this.height - 100]).children(function(d) {
         if (d.children.length === 0) {
@@ -196,6 +198,11 @@
       });
       this.diagonal = d3.svg.diagonal();
     }
+
+    VizTree.prototype.resize = function(width, height) {
+      this.width = width;
+      this.height = height;
+    };
 
     VizTree.prototype.get_parent = function(el) {
       return d3.select(d3.select(el).node().parentNode);
@@ -306,6 +313,154 @@
     };
 
     return VizTree;
+
+  })();
+
+  VizArray = (function() {
+    function VizArray(speed, width, height) {
+      this.speed = speed;
+      this.width = width;
+      this.height = height;
+      this.xspacing = 10;
+      this.yspacing = 10;
+      this.xmargin = 10;
+      this.ymargin = 10;
+      this.inode = 0;
+      this.old_data = null;
+      this.svg = d3.select("#representations").append('div').attr('class', 'viz array').append("svg").attr('width', this.width).attr('height', this.height).append('g').attr('transform', "translate(" + this.xmargin + "," + this.ymargin + ")");
+    }
+
+    VizArray.prototype.resize = function(width, height) {
+      this.width = width;
+      this.height = height;
+    };
+
+    VizArray.prototype.compute_radius = function(d, size) {
+      var bbox, rad;
+      this.svg.append("svg:text").attr('class', 'tmp').text(d).style('font-size', "" + size + "px");
+      bbox = this.svg.select('text.tmp')[0][0].getBBox();
+      rad = (Math.max(bbox.width, bbox.height) + Math.max(this.xspacing, this.yspacing) * 2) / 2;
+      this.svg.select('text.tmp').remove();
+      return bbox;
+    };
+
+    VizArray.prototype.morph_data = function(data, old_data) {
+      var i, _i, _j, _k, _l, _ref, _ref1, _ref2, _ref3;
+      old_data = old_data || [];
+      if (old_data.length === data.length) {
+        for (i = _i = 0, _ref = data.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+          old_data[i].value = data[i];
+        }
+      } else if (old_data.length < data.length) {
+        for (i = _j = 0, _ref1 = data.length; 0 <= _ref1 ? _j < _ref1 : _j > _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
+          if (i === old_data.length || data[i] !== old_data[i].value) {
+            old_data.splice(i, 0, {
+              value: data[i],
+              inode: this.inode++
+            });
+            break;
+          }
+        }
+      } else {
+        for (i = _k = 0, _ref2 = old_data.length; 0 <= _ref2 ? _k < _ref2 : _k > _ref2; i = 0 <= _ref2 ? ++_k : --_k) {
+          if (data[i] !== old_data[i].value) {
+            old_data.splice(i, 1);
+            break;
+          }
+        }
+      }
+      for (i = _l = 0, _ref3 = old_data.length; 0 <= _ref3 ? _l < _ref3 : _l > _ref3; i = 0 <= _ref3 ? ++_l : --_l) {
+        old_data[i].index = i;
+      }
+      return old_data;
+    };
+
+    VizArray.prototype.draw = function(data) {
+      var block_x, block_y, exited, fsize, new_data, rectGroup, sel, size, t0, t1, x_level, y_level,
+        _this = this;
+      new_data = this.morph_data(data, this.old_data);
+      this.old_data = new_data;
+      data = new_data;
+      block_x = (this.width - 2 * this.xmargin - (data.length - 1) * this.xspacing) / data.length;
+      block_y = (this.height - 2 * this.ymargin - 2 * this.yspacing) / 3;
+      size = Math.min(block_x, block_y);
+      fsize = Math.floor(size / 4);
+      y_level = function(i) {
+        return i * (_this.yspacing + size);
+      };
+      x_level = function(i) {
+        return i * (_this.xspacing + size);
+      };
+      sel = function(d) {
+        return d.inode;
+      };
+      exited = false;
+      this.svg.selectAll('g.rect').data(data, sel).exit().attr('target_y', y_level(2)).attr('exit', true).each(function() {
+        return exited = true;
+      });
+      rectGroup = this.svg.selectAll('g.rect').data(data, sel).enter().append('svg:g').attr('class', 'rect').attr('y', y_level(0)).attr('x', x_level(0)).attr('target_y', y_level(1)).attr('target_x', function(d, i) {
+        return x_level(d.index);
+      });
+      rectGroup.append('svg:rect').attr('width', size).attr('height', size);
+      rectGroup.append('svg:text').text(function(d) {
+        return d.value;
+      }).style('font-size', fsize + 'px').attr('x', function(d) {
+        var rad;
+        rad = _this.compute_radius(d.value, fsize);
+        return -rad.width / 2 + size / 2;
+      }).attr('y', function(d) {
+        var rad;
+        rad = _this.compute_radius(d.value, fsize);
+        return size / 2 + rad.height / 4;
+      });
+      t0 = this.svg.transition().duration(1000);
+      if (exited) {
+        t0.selectAll('g.rect[exit]').attr('transform', function(d, i) {
+          var v, x;
+          v = d3.select(this).attr('target_y');
+          x = d3.select(this).attr('x');
+          d3.select(this).attr('y', v);
+          return "translate(" + x + ", " + v + ")";
+        }).style('opacity', function(d) {
+          var _ref;
+          return (_ref = d3.select(this).attr('exit')) != null ? _ref : {
+            0: 1
+          };
+        });
+        t0 = t0.transition().duration(1000);
+      }
+      t0.selectAll('g.rect').attr('transform', function(d, i) {
+        var v, y;
+        v = d3.select(this).attr('target_x') || x_level(d.index);
+        y = d3.select(this).attr('y');
+        d3.select(this).attr('target_x', null);
+        d3.select(this).attr('x', v);
+        return "translate(" + v + "," + y + ")";
+      }).select('text').text(function(d) {
+        return d.value;
+      }).style('font-size', fsize + 'px').attr('x', function(d) {
+        return -_this.compute_radius(d.value, fsize).width / 2 + size / 2;
+      }).attr('y', function(d) {
+        var rad;
+        rad = _this.compute_radius(d.value, fsize);
+        return size / 2 + rad.height / 4;
+      });
+      t0.selectAll('g.rect').select('rect').attr('width', size).attr('height', size);
+      t1 = t0.transition().duration(1000);
+      t1.selectAll('g.rect').attr('transform', function() {
+        var v, x;
+        v = d3.select(this).attr('target_y') || y_level(1);
+        x = d3.select(this).attr('x');
+        d3.select(this).attr('target_y', null);
+        d3.select(this).attr('y', v);
+        return "translate(" + x + "," + v + ")";
+      });
+      return t1.each('end', function() {
+        return _this.svg.selectAll('[exit]').remove();
+      });
+    };
+
+    return VizArray;
 
   })();
 

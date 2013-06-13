@@ -1,8 +1,8 @@
 (function() {
-  var ArrayTree, Binding, DS, Executor, Represented, WORKER,
+  var ArrayArray, ArrayTree, Binding, DS, Executor, Identity, Represented, WORKER,
+    __slice = [].slice,
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    __slice = [].slice;
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   if (this.WORKER === void 0) {
     this.WORKER = {};
@@ -13,9 +13,14 @@
   this.WORKER.Represented = (function() {
     function Represented() {}
 
-    Represented.prototype.represent_as = function(interface_name) {
-      WORKER.manager.register(this, interface_name);
-      this.notify();
+    Represented.prototype.represent_as = function() {
+      var interface_name, interfaces_names, _i, _len;
+      interfaces_names = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      for (_i = 0, _len = interfaces_names.length; _i < _len; _i++) {
+        interface_name = interfaces_names[_i];
+        WORKER.manager.register(this, interface_name);
+        this.notify();
+      }
       return this;
     };
 
@@ -132,6 +137,48 @@
   })();
 
   this.WORKER.interfaces['array_tree'] = new ArrayTree();
+
+  if (this.WORKER === void 0) {
+    this.WORKER = {};
+  }
+
+  if (this.WORKER.interfaces === void 0) {
+    this.WORKER.interfaces = {};
+  }
+
+  ArrayArray = (function() {
+    function ArrayArray() {}
+
+    ArrayArray.prototype.process = function(array) {
+      return array;
+    };
+
+    return ArrayArray;
+
+  })();
+
+  this.WORKER.interfaces['array_array'] = new ArrayArray();
+
+  if (this.WORKER === void 0) {
+    this.WORKER = {};
+  }
+
+  if (this.WORKER.interfaces === void 0) {
+    this.WORKER.interfaces = {};
+  }
+
+  Identity = (function() {
+    function Identity() {}
+
+    Identity.prototype.process = function(data) {
+      return data;
+    };
+
+    return Identity;
+
+  })();
+
+  this.WORKER.interfaces['identity'] = new Identity();
 
   if (this.WORKER === void 0) {
     this.WORKER = {};

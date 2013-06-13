@@ -3,9 +3,10 @@ WORKER=@WORKER
 
 class @WORKER.Represented
 
-    represent_as: (interface_name) ->
-        WORKER.manager.register(this, interface_name)
-        @notify()
+    represent_as: (interfaces_names...) ->
+        for interface_name in interfaces_names
+            WORKER.manager.register(this, interface_name)
+            @notify()
         return this
 
     notify: () ->
@@ -70,6 +71,25 @@ class ArrayTree
 
 
 @WORKER.interfaces['array_tree'] = new ArrayTree()
+
+
+@WORKER={} if @WORKER is undefined
+@WORKER.interfaces = {} if @WORKER.interfaces is undefined
+
+class ArrayArray
+    process: (array) -> array
+
+
+@WORKER.interfaces['array_array'] = new ArrayArray()
+
+@WORKER={} if @WORKER is undefined
+@WORKER.interfaces = {} if @WORKER.interfaces is undefined
+
+class Identity
+    process: (data) -> data
+
+
+@WORKER.interfaces['identity'] = new Identity()
 
 @WORKER={} if @WORKER is undefined
 WORKER=@WORKER
