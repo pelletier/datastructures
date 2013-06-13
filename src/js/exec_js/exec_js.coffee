@@ -135,7 +135,7 @@ $(document).ready () =>
                     switch data.data.kind
                         when 'register'
                             height = 400
-                            width = 300
+                            width = 390
                             representations[data.data.id] = new visualizations[data.data.interface](speed, width, height)
                         when 'update'
                             console.log("updating #{data.data.id}")

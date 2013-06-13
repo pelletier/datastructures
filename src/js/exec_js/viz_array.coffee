@@ -94,7 +94,9 @@ class VizArray
                 rad = @compute_radius(d.value, fsize)
                 return size / 2 + rad.height / 4)
 
-        t0 = @svg.transition().duration(1000)
+        step = @speed * 2
+
+        t0 = @svg.transition().duration(step)
         if exited
             t0.selectAll('g.rect[exit]')
                 .attr('transform', (d, i) ->
@@ -103,7 +105,7 @@ class VizArray
                     d3.select(this).attr('y', v)
                     return "translate(#{x}, #{v})")
                 .style('opacity', (d) -> d3.select(this).attr('exit') ? 0 : 1)
-            t0 = t0.transition().duration(1000)
+            t0 = t0.transition().duration(step)
  
         t0.selectAll('g.rect')
             .attr('transform', (d, i) ->
@@ -123,9 +125,9 @@ class VizArray
         t0.selectAll('g.rect')
             .select('rect')
             .attr('width', size)
-            .attr('height', size);
-        
-        t1 = t0.transition().duration(1000)
+            .attr('height', size)
+
+        t1 = t0.transition().duration(step)
         t1.selectAll('g.rect')
             .attr('transform', () ->
                 v = d3.select(this).attr('target_y') or y_level(1)
