@@ -3,6 +3,7 @@
 ## Dependencies
 
 * `npm` (+ any JS runtime)
+* `ruby` >= 1.9 and [Bundler](http://gembundler.com/)
 
 ## Build
 
