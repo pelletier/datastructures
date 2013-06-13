@@ -28,7 +28,7 @@ class VizArray
 
     morph_data: (data, old_data) ->
         old_data = old_data or []
-        if old_data.length is data.length)
+        if old_data.length is data.length
             for i in [0...data.length]
                 old_data[i].value = data[i]
         else if old_data.length < data.length

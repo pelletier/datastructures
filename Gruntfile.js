@@ -69,7 +69,8 @@ module.exports = function(grunt) {
                     ],
                     '_build/js/exec.js': [
                         'src/js/exec_js/exec_js.coffee',
-                        'src/js/exec_js/viz_tree.coffee'
+                        'src/js/exec_js/viz_tree.coffee',
+                        'src/js/exec_js/viz_array.coffee'
                     ],
 
                     '_tests/array.js': 'src/js/worker/array.coffee'
