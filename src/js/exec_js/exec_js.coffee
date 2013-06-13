@@ -75,7 +75,8 @@ $(document).ready () =>
 
         representations = {}
         visualizations = {
-            "array_tree": VizTree
+            "array_tree": VizTree,
+            "array_array": VizArray
         }
 
         update_func = () ->

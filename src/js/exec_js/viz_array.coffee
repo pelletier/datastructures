@@ -10,11 +10,11 @@ class VizArray
         @inode = 0
         @old_data = null
 
-        @svg = d3.select("#repr").append('svg')
-            .attr('width', width)
-            .attr('height', height)
-            .append('g')
-            .attr('transform', "translate(#{xmargin}, #{ymargin})")
+        @svg = d3.select("#representations").append('div').attr('class', 'viz array')
+            .append("svg")
+            .attr('width', @width)
+            .attr('height', @height)
+            .append('g').attr('transform', "translate(#{@xmargin},#{@ymargin})")
 
     compute_radius: (d, size) ->
         @svg.append("svg:text")
@@ -22,7 +22,7 @@ class VizArray
             .text(d)
             .style('font-size', "#{size}px")
         bbox = @svg.select('text.tmp')[0][0].getBBox()
-        rad = (Math.max(bbox.width, bbox.height) + Math.max(xspacing, yspacing)*2) / 2
+        rad = (Math.max(bbox.width, bbox.height) + Math.max(@xspacing, @yspacing)*2) / 2
         @svg.select('text.tmp').remove()
         return bbox
 
@@ -36,7 +36,7 @@ class VizArray
                 if i is old_data.length or data[i] isnt old_data[i].value
                     old_data.splice(i, 0, {
                         value: data[i],
-                        inode: inode++
+                        inode: @inode++
                     })
                     break
         else
@@ -50,17 +50,17 @@ class VizArray
         return old_data
 
     draw: (data) ->
-        new_data = @morph_data(data, old_data)
-        old_data = new_data
+        new_data = @morph_data(data, @old_data)
+        @old_data = new_data
         data = new_data
 
-        block_x = (width - 2*xmargin - (data.length - 1) * xspacing) / data.length
-        block_y = (height - 2*ymargin - 2 * yspacing) / 3
+        block_x = (@width - 2*@xmargin - (data.length - 1) * @xspacing) / data.length
+        block_y = (@height - 2*@ymargin - 2 * @yspacing) / 3
         size = Math.min(block_x, block_y)
         fsize = Math.floor(size / 4)
 
-        y_level = (i) -> i * (yspacing + size)
-        x_level = (i) -> i * (xspacing + size)
+        y_level = (i) => i * (@yspacing + size)
+        x_level = (i) => i * (@xspacing + size)
         sel = (d) -> d.inode
 
         exited = false
@@ -92,7 +92,7 @@ class VizArray
                 return -rad.width/2 + size / 2)
             .attr('y', (d) =>
                 rad = @compute_radius(d.value, fsize)
-                return size / 2 + bbox.height / 4)
+                return size / 2 + rad.height / 4)
 
         t0 = @svg.transition().duration(1000)
         if exited
@@ -118,7 +118,7 @@ class VizArray
                 .attr('x', (d) => -@compute_radius(d.value, fsize).width/2 + size / 2)
                 .attr('y', (d) =>
                     rad = @compute_radius(d.value, fsize)
-                    return size / 2 + bbox.height / 4) #XXX
+                    return size / 2 + rad.height / 4) #XXX
  
         t0.selectAll('g.rect')
             .select('rect')

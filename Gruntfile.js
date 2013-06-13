@@ -62,6 +62,7 @@ module.exports = function(grunt) {
                         'src/js/worker/represented.coffee',
                         'src/js/worker/WorkerDSManager.coffee',
                         'src/js/worker/arraytree.coffee',
+                        'src/js/worker/arrayarray.coffee',
                         'src/js/worker/identity.coffee',
                         'src/js/worker/mediator.coffee',
                         'src/js/worker/array.coffee',
