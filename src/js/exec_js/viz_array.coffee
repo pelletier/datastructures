@@ -50,7 +50,7 @@ class VizArray
         return old_data
 
     draw: (data) ->
-        new_data = morph_data(data, old_data)
+        new_data = @morph_data(data, old_data)
         old_data = new_data
         data = new_data
 
@@ -87,11 +87,11 @@ class VizArray
         rectGroup.append('svg:text')
             .text((d) -> d.value)
             .style('font-size', fsize + 'px')
-            .attr('x', (d) ->
-                rad = compute_radius(d.value, fsize)
+            .attr('x', (d) =>
+                rad = @compute_radius(d.value, fsize)
                 return -rad.width/2 + size / 2)
-            .attr('y', (d) ->
-                rad = compute_radius(d.value, fsize)
+            .attr('y', (d) =>
+                rad = @compute_radius(d.value, fsize)
                 return size / 2 + bbox.height / 4)
 
         t0 = @svg.transition().duration(1000)
@@ -115,9 +115,9 @@ class VizArray
             .select('text')
                 .text((d) -> d.value)
                 .style('font-size', fsize + 'px')
-                .attr('x', (d) -> -compute_radius(d.value, fsize).width/2 + size / 2)
-                .attr('y', (d) ->
-                    rad = compute_radius(d.value, fsize)
+                .attr('x', (d) => -@compute_radius(d.value, fsize).width/2 + size / 2)
+                .attr('y', (d) =>
+                    rad = @compute_radius(d.value, fsize)
                     return size / 2 + bbox.height / 4) #XXX
  
         t0.selectAll('g.rect')
