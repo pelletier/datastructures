@@ -14,15 +14,11 @@ assets:
 clean:
 	rm -Rf assets _build output components
 
-compile: 
+compile:
 	nanoc compile
 
-view: compile
-	nanoc view
-
 watch:
-	nanoc view &
-	guard
+	bundle exec guard
 
 deploy: install
 	mkdir -p /tmp/datastructures

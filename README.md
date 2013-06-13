@@ -11,13 +11,11 @@
 3. `make` build the website; the result is in `/output/`
 
 
-## View
+## Develop
 
-`make view`
-
-## Watch
-
-`make watch`
+`make watch` will start [Guard](http://guardgem.org/), which in turn starts an
+HTTP server (`nanoc view`) and automatically rebuild the pages when a source
+file is modified.
 
 
 ## Organisation
