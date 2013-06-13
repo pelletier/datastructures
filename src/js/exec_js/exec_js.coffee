@@ -134,8 +134,9 @@ $(document).ready () =>
                     console.log(data)
                     switch data.data.kind
                         when 'register'
-                            console.log("registered #{data.data.id}")
-                            representations[data.data.id] = new visualizations[data.data.interface](speed)
+                            height = 400
+                            width = 300
+                            representations[data.data.id] = new visualizations[data.data.interface](speed, width, height)
                         when 'update'
                             console.log("updating #{data.data.id}")
                             states.push({repr_id: data.data.id, data: data.data.data})

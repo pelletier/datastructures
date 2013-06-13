@@ -1,8 +1,6 @@
 class VizArray
 
-    constructor: (@speed) ->
-        @width = 400
-        @height = 400
+    constructor: (@speed, @width, @height) ->
         @xspacing = 10
         @yspacing = 10
         @xmargin = 10
@@ -15,6 +13,8 @@ class VizArray
             .attr('width', @width)
             .attr('height', @height)
             .append('g').attr('transform', "translate(#{@xmargin},#{@ymargin})")
+
+    resize: (@width, @height) ->
 
     compute_radius: (d, size) ->
         @svg.append("svg:text")

@@ -1,8 +1,6 @@
 class VizTree
 
-    constructor: (@speed) ->
-        @width = 400
-        @height = 400
+    constructor: (@speed, @width, @height) ->
         @svg = d3.select("#representations").append('div').attr('class', 'viz graph')
             .append("svg")
             .attr('width', @width)
@@ -18,6 +16,8 @@ class VizTree
                 return a.rad + b.rad + 10) # at least 10px between nodes
 
         @diagonal = d3.svg.diagonal()
+
+    resize: (@width, @height) ->
 
     get_parent: (el) -> d3.select(d3.select(el).node().parentNode)
 
